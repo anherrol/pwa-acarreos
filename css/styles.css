@@ -1,0 +1,123 @@
+/* estilos generales */
+* {
+    margin:0px;
+    padding: 0px;
+    text-decoration: none;
+    font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+    overflow-x: hidden;
+}
+
+body {
+    background-color: white;
+} 
+
+.clearfix {
+    clear: both;
+    float: none;
+}
+
+.container {
+    width: 85%;
+    margin: 0px auto; /* centrar bloque */
+}
+
+/* Header */
+#main-header {
+    background-color: white;
+    height: 100px;
+    line-height: 85px;
+}
+
+#logo {
+    width: 63%;
+    float: left;
+}
+
+#logo h1 {
+    font-weight: bold;
+    font-size: 25px;
+}
+
+#menu {
+    width: 320px;
+    float: left;
+}
+
+#menu ul li {
+    list-style: none;
+    float: left;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#menu ul li a {
+    color: black;
+}
+
+#menu ul li a:hover {
+    color: blue;
+}
+
+/* FORMULARIO */
+#slider h2 {
+    text-align: center;
+}
+
+/* FOOTER */
+#contact-footer {
+    background-color: #333;
+    padding-top: 5px;
+    padding-bottom: 40px;
+    margin-top: 30px;
+    text-align: center;
+    color: white;
+}
+
+#footer .subheader {
+    color: white
+}
+
+#contact-email {
+    color: white;
+    text-decoration: none;
+    line-height: 40px;
+}
+
+.loginLabel {
+    width: 200px;
+}
+
+@media (max-width: 1209px) {
+    #main-header {
+        height: 70px;
+        line-height: 65px;
+    }
+}
+
+@media (max-width: 1018px) {
+    #main-header {
+        height: 70px;
+        line-height: 65px;
+    }
+
+    .container {
+        width: 95%;
+    }
+}
+
+@media (max-width: 911px) {
+    #logo {
+        width: 240px;
+        float: none;
+        margin: 0px auto;
+    }
+
+    #menu {
+        float: none;
+        margin: 0px auto;
+        background-color: pink;
+    }
+}

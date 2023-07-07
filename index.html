@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <title>Rastreo de acarreos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="shortcut icon" type="image/png" href="assets/img/icons/favicon-16x16.png" />
+
+        <!-- color de la aplicación -->
+        <meta name="theme-color" content="#FFF" />
+
+        <!-- Optimización para movil -->
+        <meta name="MobileOptimized" content="width" />
+        <meta name="HandheldFriendly" content="true" />
+        
+        <!-- meta etiquetas para dispositivos de apple -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="white-translucent" />
+        <link rel="apple-touch-icon" href="assets/img/icons/apple-icon.png" />
+        <link rel="apple-touch-startup-image" href="assets/img/icons/apple-icon.png" />
+
+        <!-- Configuración General PWA -->
+        <link rel="manifest" href="manifest.json" />
+
+        <link rel="stylesheet" href="css/styles.css" />
+
+        <script src="./js/main.js"></script>
+    </head>
+    <body>
+        <header id="main-header">
+            <div class="container">
+                <div id="logo">
+                    <h1>Rastreo de acarreos</h1>
+                </div>
+                <div id="menu">
+                    <ul>
+                        <li>
+                            <a href="#">
+                                Inicio
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Contacto
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Cerrar sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <div class="clearfix"></div>
+        <div id="slider">
+            <h2>
+                Inicio de sesión
+            </h2>
+            <div id="loginForm">
+                <form action="action_page.php" method="post">
+                    <img src="assets/img/generic-avatar.png" alt="Avatar" class="avatar">
+                
+                    <div class="container">
+                        <label class="loginLabel" for="uname"><b>Clave</b></label>
+                        <input type="text" placeholder="Ingrese clave" name="uname" required>
+                    </div>
+                
+                    <div class="container">
+                        <label class="loginLabel" for="psw"><b>Contrasena</b></label>
+                        <input type="password" placeholder="Ingrese contraseña" name="psw" required>
+                    </div>
+                
+                    <div class="container">
+                        <button type="submit">Iniciar Sesión</button>
+                        <button type="button" class="cancelbtn">Cancel</button>
+                    </div>
+                    <!--<span class="psw">Forgot <a href="#">password?</a></span>-->
+                </form>
+            </div>
+        </div>
+        <footer id="contact-footer">
+            <div class="clearfix"></div>
+            <div class="container">
+                <h2 class="subheader">Contacto</h2>
+                <p>
+                    <a id="contact-email" href="mailto:antonio.herrera@imademx.net">
+                        Correo electrónico
+                    </a>
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
