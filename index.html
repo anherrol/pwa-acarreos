@@ -25,71 +25,40 @@
         <link rel="stylesheet" href="css/styles.css" />
 
         <script src="./js/main.js"></script>
+
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
+        <script src="js/jquery-3.7.0.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
     </head>
     <body>
         <header id="main-header">
             <div class="container">
-                <div id="logo">
-                    <h1>Rastreo de acarreos</h1>
-                </div>
-                <div id="menu">
-                    <ul>
-                        <li>
-                            <a href="#">
-                                Inicio
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Contacto
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Cerrar sesión
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <img src="assets\img\Logo-TrenMaya-Completo.jpg" alt="Tren Maya Logo" class="imageLogo" />
+                <h1 class="logo-title">Rastreo de acarreos</h1>
             </div>
         </header>
         <div class="clearfix"></div>
         <div id="slider">
-            <h2>
+            <h4>
                 Inicio de sesión
-            </h2>
+            </h4>
             <div id="loginForm">
-                <form action="action_page.php" method="post">
-                    <img src="assets/img/generic-avatar.png" alt="Avatar" class="avatar">
-                
-                    <div class="container">
-                        <label class="loginLabel" for="uname"><b>Clave</b></label>
-                        <input type="text" placeholder="Ingrese clave" name="uname" required>
+                <form>
+                    <div class="form-group">
+                      <label for="userKey">Id del empleado</label>
+                      <input type="text" class="form-control" id="userKey" placeholder="Ingrese Id" autofocus="autofocus" />
                     </div>
-                
-                    <div class="container">
-                        <label class="loginLabel" for="psw"><b>Contrasena</b></label>
-                        <input type="password" placeholder="Ingrese contraseña" name="psw" required>
+                    <div class="form-group">
+                      <label for="userPwd">Contraseña</label>
+                      <input type="password" class="form-control" id="userPwd" placeholder="Ingrese su contraseña" />
                     </div>
-                
-                    <div class="container">
-                        <button type="submit">Iniciar Sesión</button>
-                        <button type="button" class="cancelbtn">Cancel</button>
+                    <div class="form-group">
+                      <br />
                     </div>
-                    <!--<span class="psw">Forgot <a href="#">password?</a></span>-->
-                </form>
+                    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                  </form>
             </div>
         </div>
-        <footer id="contact-footer">
-            <div class="clearfix"></div>
-            <div class="container">
-                <h2 class="subheader">Contacto</h2>
-                <p>
-                    <a id="contact-email" href="mailto:antonio.herrera@imademx.net">
-                        Correo electrónico
-                    </a>
-                </p>
-            </div>
-        </footer>
     </body>
 </html>
