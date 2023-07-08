@@ -50,3 +50,7 @@ body {
     margin: 0px auto; /* centrar bloque */
     text-align: center;
 }
+
+.btn-menu {
+    width: 85%;
+}

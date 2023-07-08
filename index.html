@@ -24,12 +24,12 @@
 
         <link rel="stylesheet" href="css/styles.css" />
 
-        <script src="./js/main.js"></script>
-
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
         <script src="js/jquery-3.7.0.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
+
+        <script src="./js/main.js"></script>
     </head>
     <body>
         <header id="main-header">
@@ -43,11 +43,12 @@
             <h4>
                 Inicio de sesión
             </h4>
+            <img src="assets/img/generic-avatar.png" alt="login avatar" />
             <div id="loginForm">
                 <form>
                     <div class="form-group">
                       <label for="userKey">Id del empleado</label>
-                      <input type="text" class="form-control" id="userKey" placeholder="Ingrese Id" autofocus="autofocus" />
+                      <input type="text" class="form-control" id="userKey" placeholder="Ingrese Id" />
                     </div>
                     <div class="form-group">
                       <label for="userPwd">Contraseña</label>
@@ -56,9 +57,13 @@
                     <div class="form-group">
                       <br />
                     </div>
-                    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                    <button type="submit" class="btn btn-primary" id="btnLogin">Iniciar sesi&oacute;n</button>
+                    <div id="error"></div> 
                   </form>
             </div>
         </div>
+        <script>
+            $("#userKey").focus();
+        </script>
     </body>
 </html>
