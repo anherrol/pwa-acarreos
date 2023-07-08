@@ -15,7 +15,7 @@ if (!previousLoading) {
     }
 
     // general constants
-    const BASE_API_URL = 'https://localhost:7065/api/';
+    const BASE_API_URL = 'https://acarreos-dev-api.azurewebsites.net/api/';
 
     // service calling
     var callService = (service, dataString, successCallBack, errorCallBack) => {
