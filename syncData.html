@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <title>Rastreo de acarreos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="shortcut icon" type="image/png" href="assets/img/icons/favicon-16x16.png" />
+
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
+
+        <script src="js/jquery-3.7.0.min.js"></script>
+        <script src="js/jquery.rest.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
+        <!-- Librerías propias -->
+        <script src="js/localRepository.js"></script>
+        <script src="js/serviceProxy.js"></script>
+        <script src="js/dataLayer.js"></script>
+        <script src="js/main.js"></script>
+    </head>
+    <body>
+        <header id="main-header">
+            <div class="container">
+                <a href="menu.html"><img src="assets\img\back-arrow.png" alt="back-arrow" class="image-back" /></a>
+                <img src="assets\img\Logo-TrenMaya-Completo.jpg" alt="Tren Maya Logo" class="imageLogo" />
+                <h1 class="logo-title">Rastreo de acarreos</h1>
+            </div>
+        </header>
+        <div class="clearfix"></div>
+        <div id="slider">
+            <div class="form-group">
+                <button class="btn btn-primary btn-lg btn-menu" onclick="syncData();">Sincronizar data</button>
+            </div>
+            <br />
+            <div class="form-group">
+                <ul class="list-group list-group-numbered sync-log" id="syncLog"></ul>
+            </div>
+        </div>
+    </body>
+</html>
