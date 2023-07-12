@@ -65,8 +65,11 @@ if (!previousLoading) {
             var password = $("#userPwd").val();
             
             if ($.trim(username).length > 0 && $.trim(password).length > 0) {
-                loginService(username, password);
+                var authDL = new AuthProxy();
+
+                authDL.loginService(username, password);
             }
+
             return false;
         });
     });

@@ -6,29 +6,111 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="shortcut icon" type="image/png" href="assets/img/icons/favicon-16x16.png" />
 
-        
         <link rel="stylesheet" href="css/styles.css" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
 
         <script src="js/jquery-3.7.0.min.js"></script>
+        <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 
-        <script src="./js/repository.js"></script>
-        <script src="./js/main.js"></script>
+        <!-- Librerías propias -->
+        <script src="js/localRepository.js"></script>
+        <script src="js/serviceProxy.js"></script>
+        <script src="js/dataLayer.js"></script>
+        <script src="js/main.js"></script>
     </head>
     <body>
         <header id="main-header">
             <div class="container">
+                <a href="menu.html"><img src="assets\img\back-arrow.png" alt="back-arrow" class="image-back" /></a>
                 <img src="assets\img\Logo-TrenMaya-Completo.jpg" alt="Tren Maya Logo" class="imageLogo" />
                 <h1 class="logo-title">Rastreo de acarreos</h1>
             </div>
         </header>
         <div class="clearfix"></div>
-        <div id="slider">
-            <form>
-                
+        <div class="container">
+            <form id="create-haulling">
+                <div class="form-group">
+                    <label for="truckList" class="form-label">Tractocamiones</label>
+                    <input class="form-control" list="trukListOptions" id="truckList" placeholder="Buscar tractocamión...">
+                    <datalist id="trukListOptions">
+                    </datalist>
+                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('truckList'));" value="Limpiar tractocamión">
+                </div> 
+                <br /> 
+                <div class="form-group">
+                    <label for="gondolaList" class="form-label">Primera góndola</label>
+                    <input class="form-control" list="gondolaListOptions" id="gondolaList" placeholder="Buscar primera góndola...">
+                    <datalist id="gondolaListOptions">
+                    </datalist>
+                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('gondolaList'));" value="Limpiar primera góndola">
+                </div> 
+                <br /> 
+                <div class="form-group">
+                    <label for="primerTonelaje" class="form-label">Primer tonelaje</label>
+                    <input class="form-control" type="number" id="primerTonelaje" name="primerTonelaje" min="0" max="300" placeholder="Ingrese tonelaje de la primera góndola..." />
+                </div> 
+                <br />
+                <div class="form-group">
+                    <label for="secondGondolaList" class="form-label">Segunda góndola</label>
+                    <input class="form-control" list="secondGondolaListOptions" id="secondGondolaList" placeholder="Buscar segunda góndola...">
+                    <datalist id="secondGondolaListOptions">
+                    </datalist>
+                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('secondGondolaList'));" value="Limpiar segunda góndola">
+                </div> 
+                <br />
+                <div class="form-group">
+                    <label for="segundoTonelaje" class="form-label">Segundo tonelaje</label>
+                    <input class="form-control" type="number" id="segundoTonelaje" name="segundoTonelaje" min="0" max="300" placeholder="Ingrese tonelaje de la segunda góndola..." />
+                </div> 
+                <br />
+                <div class="form-group">
+                    <input type="button" class="btn btn-primary form-control" onclick="guardarAcarreo();" value="Guardar Acarreo">
+                </div>
             </form>
         </div>
+        <script>
+            // create a manager of local database
+            let localRepository = new LocalRepository();
+
+            // recover trucklist and fill datalist
+            localRepository
+                .getTrucks()
+                .then(trucks => {
+                    let dtlTrucks = document.getElementById('trukListOptions')
+
+                    trucks.forEach(element => {
+                        dtlTrucks.appendChild(new Option(element.qrcode, element.description));
+                    });
+                });
+            localRepository
+                .getGondolas()
+                .then(trucks => {
+                    let dtlGondolas = document.getElementById('gondolaListOptions')
+
+                    trucks.forEach(element => {
+                        dtlGondolas.appendChild(new Option(element.qrcode, element.description));
+                    });
+                });
+            localRepository
+                .getGondolas()
+                .then(trucks => {
+                    let dtlSecondGondolas = document.getElementById('secondGondolaListOptions')
+
+                    trucks.forEach(element => {
+                        dtlSecondGondolas.appendChild(new Option(element.qrcode, element.description));
+                    });
+                });
+
+            function limpiarLista(lista) {
+                lista.value = '';
+            }
+
+            function guardarAcarreo() {
+                console.log('Guardar acarreo');
+            }
+        </script>
     </body>
 </html>

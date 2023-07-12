@@ -4,19 +4,23 @@
         <meta charset="utf-8" />
         <title>Rastreo de acarreos</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
         <link rel="shortcut icon" type="image/png" href="assets/img/icons/favicon-16x16.png" />
 
-        
         <link rel="stylesheet" href="css/styles.css" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
 
         <script src="js/jquery-3.7.0.min.js"></script>
+        <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <!-- 
-        <script src="./js/repository.js"></script> 
-        -->
-        <script src="./js/main.js"></script>
+        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
+        <!-- Librerías propias -->
+        <script src="js/serviceProxy.js"></script>
+        <script src="js/dataLayer.js"></script>
+        <script src="js/localRepository.js"></script>
+        <script src="js/main.js"></script>
     </head>
     <body>
         <header id="main-header">
@@ -50,6 +54,14 @@
                 <br />
                 <div class="form-group">
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./createEvent.html" role="button">Registrar Evento</a>
+                </div>
+                <br />
+                <div class="form-group">
+                    <a class="btn btn-outline-primary btn-lg btn-menu" href="./syncData.html" role="button">Sincronizar</a>
+                </div>
+                <br />
+                <div class="form-group">
+                    <a class="btn btn-outline-primary btn-lg btn-menu" href="./" role="button">Cerrar sesión</a>
                 </div>
             </form>
         </div>

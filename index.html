@@ -23,13 +23,19 @@
         <link rel="manifest" href="manifest.json" />
 
         <link rel="stylesheet" href="css/styles.css" />
-
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
-        <script src="js/jquery-3.7.0.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
 
-        <script src="./js/main.js"></script>
+        <script src="js/jquery-3.7.0.min.js"></script>
+        <script src="js/jquery.rest.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
+        <!-- Librerías propias -->
+        <script src="js/serviceProxy.js"></script>
+        <script src="js/dataLayer.js"></script>
+        <script src="js/localRepository.js"></script>
+        <script src="js/main.js"></script>
     </head>
     <body>
         <header id="main-header">
@@ -57,7 +63,7 @@
                     <div class="form-group">
                       <br />
                     </div>
-                    <button type="submit" class="btn btn-primary" id="btnLogin">Iniciar sesi&oacute;n</button>
+                    <button type="button" class="btn btn-primary" id="btnLogin">Iniciar sesi&oacute;n</button>
                     <div id="error"></div> 
                   </form>
             </div>

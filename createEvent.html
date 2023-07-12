@@ -6,29 +6,91 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="shortcut icon" type="image/png" href="assets/img/icons/favicon-16x16.png" />
 
-        
         <link rel="stylesheet" href="css/styles.css" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
 
         <script src="js/jquery-3.7.0.min.js"></script>
+        <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 
-        <script src="./js/repository.js"></script>
-        <script src="./js/main.js"></script>
+        <!-- Librerías propias -->
+        <script src="js/localRepository.js"></script>
+        <script src="js/serviceProxy.js"></script>
+        <script src="js/dataLayer.js"></script>
+        <script src="js/main.js"></script>
     </head>
     <body>
         <header id="main-header">
             <div class="container">
+                <a href="menu.html"><img src="assets\img\back-arrow.png" alt="back-arrow" class="image-back" /></a>
                 <img src="assets\img\Logo-TrenMaya-Completo.jpg" alt="Tren Maya Logo" class="imageLogo" />
                 <h1 class="logo-title">Rastreo de acarreos</h1>
             </div>
         </header>
         <div class="clearfix"></div>
-        <div id="slider">
+        <div class="container">
             <form>
-                
+                <div class="form-group">
+                    <label for="machinesList" class="form-label">Maquina a reportar</label>
+                    <input list="machinesListOptions" class="form-control" id="machinesList" placeholder="Buscar maquinaria...">
+                    <datalist id="machinesListOptions">
+                    </datalist>
+                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('machinesList'));" value="Limpiar maquinaria">
+                </div> 
+                <br /> 
+                <div class="form-group">
+                    <label for="hourmeter" class="form-label">Horómetro:</label>
+                    <input class="form-control" type="number" id="hourMeter" name="hourMeter" min="0" max="50000" placeholder="Ingrese el horómetro actual..." />
+                </div> 
+                <br />
+                <div class="form-group">
+                    <label for="eventTypeList" class="form-label">Tipo de Evento:</label>
+                    <select class="form-control" id="eventTypeList" name="eventTypeList"></select>
+                </div> 
+                <br />
+                <div class="form-group">
+                    <label for="observations" class="form-label">Observaciones:</label>
+                    <textarea id="observations" name="observations" class="form-control" rows="5" cols="35" placeholder="Ingrese observaciones, si las hubiera..." ></textarea>
+                </div> 
+                <br /> 
+                <div class="form-group">
+                    <input type="button" class="btn btn-primary form-control" onclick="guardarEvento();" value="Guardar Evento en la Maquinaria">
+                </div>
             </form>
         </div>
+        <script>
+            // create a manager of local database
+            let localRepository = new LocalRepository();
+
+            // recover trucklist and fill datalist
+            localRepository
+                .getMachines()
+                .then(machinery => {
+                    let dtlMachinery = document.getElementById('machinesListOptions')
+
+                    machinery.forEach(element => {
+                        dtlMachinery.appendChild(new Option(element.qrcode, element.description));
+                    });
+                });
+            localRepository
+                .getEventTypes()
+                .then(eventTypes => {
+                    let dtlEventTypes = document.getElementById('eventTypeList')
+
+                    eventTypes.forEach(element => {
+                        dtlEventTypes.appendChild(new Option(element.description, element.id));
+                    });
+                });
+            
+            function limpiarLista(lista) {
+                lista.value = '';
+            }
+
+            function guardarDespacho() {
+                console.log('Guardar evento en la maquinaria');
+            }
+        </script>
     </body>
 </html>

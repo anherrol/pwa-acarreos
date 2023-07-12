@@ -31,6 +31,12 @@ body {
     line-height: 85px;
 }
 
+.image-back {
+    width: 20px;
+    float: left;
+    margin: 20px 10px 0px 0px;
+}
+
 .imageLogo {
     width: 100px;
     float: left;
@@ -53,4 +59,8 @@ body {
 
 .btn-menu {
     width: 85%;
+}
+
+.sync-log {
+    text-align: left;
 }
