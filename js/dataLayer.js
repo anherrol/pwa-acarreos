@@ -1,5 +1,5 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
-    var BASE_API_URL = 'https://localhost:7065/api/';
+    var BASE_API_URL = 'https://acarreos-dev-api.azurewebsites.net/api/';
 }
 
 function AuthProxy() {

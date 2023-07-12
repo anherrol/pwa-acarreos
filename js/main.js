@@ -14,50 +14,6 @@ if (!previousLoading) {
         console.log('No puedes');
     }
 
-    // general constants
-    const BASE_API_URL = 'https://acarreos-dev-api.azurewebsites.net/api/';
-
-    // service calling
-    var callService = (service, dataString, successCallBack, errorCallBack) => {
-        var urlService = BASE_API_URL + service;
-
-        $.ajax({
-            headers: { 
-                'Accept': 'application/json',
-                'Content-Type': 'application/json' 
-            },
-            type: "POST",
-            url: urlService,
-            data: dataString,
-            cache: false,
-            beforeSend: function () { $("#login").val('Connecting...'); },
-            success: successCallBack, 
-            error: errorCallBack
-        });
-    };
-
-    // login service
-    var loginService = (username, password) => {
-        callService(
-            'Auth/login', 
-            JSON.stringify({ userKey: username, userPassword: password }), 
-            (data) => {
-                if (data) {
-                    $("body").load("menu.html").hide().fadeIn(1500).delay(6000);
-                    // window.location.href = "menu.html";
-                }
-                else {
-                    //Shake animation effect.
-                    $('#loginForm').shake();
-                    $("#btnLogin").val('Iniciar sesi&oacute;n')
-                    $("#error").html("<span style='color:#cc0000'>Error:</span> Invalid username and password. ");
-                }
-            }, 
-            (jqXhr, textStatus, errorMessage) => {
-                $("#error").html(`Error${errorMessage}`);
-            });
-    };
-
     $(document).ready(function () {
         // login button
         $('#btnLogin').click(function () {
