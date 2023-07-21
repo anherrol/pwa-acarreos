@@ -31,10 +31,11 @@
         </header>
         <div class="clearfix"></div>
         <div class="container">
-            <form id="create-haulling">
+            <form id="update-hauling">
                 <div class="form-group">
+                    <input type="hidden" id="hdnHaulingId" value=""></hidden>
                     <label for="truckList" class="form-label">Tractocamiones</label>
-                    <input class="form-control" list="trukListOptions" id="truckList" placeholder="Buscar tractocamión..." disabled="disabled">
+                    <input class="form-control" list="trukListOptions" id="truckList" placeholder="Buscar tractocamión..." oninput="onInput()">
                     <datalist id="trukListOptions">
                     </datalist>
                 </div> 
@@ -96,6 +97,11 @@
                 <div class="form-group">
                     <input type="button" class="btn btn-primary form-control" onclick="guardarAcarreo();" value="Guardar Acarreo">
                 </div>
+                <br />
+                <div class="form-group">
+                    <label id="possibleError" class="form-label error-label"></label>
+                    <label id="successMessage" class="form-label success-label"></label>
+                </div>
             </form>
             <script>
                 // create a manager of local database
@@ -103,6 +109,7 @@
     
                 // recover trucklist and fill datalist
                 localRepository
+                    .catalogs
                     .getTrucks()
                     .then(trucks => {
                         let dtlTrucks = document.getElementById('trukListOptions')
@@ -112,6 +119,7 @@
                         });
                     });
                 localRepository
+                    .catalogs
                     .getGondolas()
                     .then(trucks => {
                         let dtlGondolas = document.getElementById('gondolaListOptions')
@@ -121,6 +129,7 @@
                         });
                     });
                 localRepository
+                    .catalogs
                     .getGondolas()
                     .then(trucks => {
                         let dtlSecondGondolas = document.getElementById('secondGondolaListOptions')
@@ -129,13 +138,147 @@
                             dtlSecondGondolas.appendChild(new Option(element.qrcode, element.description));
                         });
                     });
-    
-                function limpiarLista(lista) {
-                    lista.value = '';
+          
+                <!-- Validación de controles -->
+                function validateUpdateHaulingInputs() {
+                    var result = true;
+                    var message = '';
+                    var focusControl = '';
+
+                    if (result && $('#1h1').val() === '') {
+                        result = false;
+                        focusControl = '1h1';
+                        message = 'Debe seleccionar un primer nivel de la primera góndola válido.';
+                    }
+
+                    if (result && $('#1h2').val() === '') {
+                        result = false;
+                        focusControl = '1h2';
+                        message = 'Debe seleccionar un segundo nivel de la primera góndola válido.';
+                    }
+
+                    if (result && $('#1h3').val() === '') {
+                        result = false;
+                        focusControl = '1h3';
+                        message = 'Debe seleccionar un tercer nivel de la primera góndola válido.';
+                    }
+
+                    if (result && $('#1h4').val() === '') {
+                        result = false;
+                        focusControl = '1h4';
+                        message = 'Debe seleccionar un cuarto nivel de la primera góndola válido.';
+                    }
+
+                    if (result && $('#secondGondolaList').val() !== '' && $('#2h1').val() === '') {
+                        result = false;
+                        focusControl = '2h1';
+                        message = 'Debe seleccionar un primer nivel de la segunda góndola válido.';
+                    }
+
+                    if (result && $('#secondGondolaList').val() !== '' && $('#2h2').val() === '') {
+                        result = false;
+                        focusControl = '2h2';
+                        message = 'Debe seleccionar un segundo nivel de la segunda góndola válido.';
+                    }
+
+                    if (result && $('#secondGondolaList').val() !== '' && $('#2h3').val() === '') {
+                        result = false;
+                        focusControl = '2h3';
+                        message = 'Debe seleccionar un tercer nivel de la segunda góndola válido.';
+                    }
+
+                    if (result && $('#secondGondolaList').val() !== '' && $('#2h4').val() === '') {
+                        result = false;
+                        focusControl = '2h4';
+                        message = 'Debe seleccionar un cuarto nivel de la segunda góndola válido.';
+                    }
+
+                    $('#possibleError').text(message);
+                    
+                    if (message !== '') {
+                        $('#' + focusControl).focus();
+                    }
+
+                    return result;
                 }
-    
+                
+                function onInput() {
+                    var val = document.getElementById("truckList").value;
+                    var opts = document.getElementById('trukListOptions').childNodes;
+
+                    for (var i = 0; i < opts.length; i++) {
+                        if (opts[i].value === val) {
+                            var localRepository = new LocalRepository();
+
+                            // create a manager of local database
+                            let haulingData; 
+                            
+                            localRepository.haulings
+                                .getHaulingByTruck(val)
+                                .then(data => {
+                                    var found = false;
+
+                                    data.every(element => {
+                                        if (element.status === 'creado') {
+                                            $("#gondolaList").val(element.gondolaOneId);
+                                            $("#secondGondolaList").val(element.gondolaTwoId);
+                                            $("#hdnHaulingId").val(element.id);
+
+                                            if (data.gondolaTwoId === '') {
+                                                $("#2h1").prop( "disabled", true );
+                                                $("#2h2").prop( "disabled", true );
+                                                $("#2h3").prop( "disabled", true );
+                                                $("#2h4").prop( "disabled", true );
+
+                                                $("#1h1").focus();
+                                            }
+
+                                            found = true;
+
+                                            return false;
+                                        }
+
+                                        return true;
+                                    });
+
+                                    if (!found) {
+                                        $("#truckList").val('');
+                                        $("#possibleError").text("No se ha encontrado un acarreo para este tractocamión.");
+                                    }
+                                });
+
+                            break;
+                        }
+                    }
+                }
+
                 function guardarAcarreo() {
-                    console.log('Guardar acarreo');
+                    if (validateUpdateHaulingInputs()) {
+                        console.log('Guardar acarreo');
+                    
+                        var localRepository = new LocalRepository();
+
+                        localRepository.haulings
+                            .updateHaulingReception(
+                                $('#hdnHaulingId').val(), 
+                                $('#1h1').val(), 
+                                $('#1h2').val(), 
+                                $('#1h3').val(), 
+                                $('#1h4').val(), 
+                                $('#2h1').val(), 
+                                $('#2h2').val(), 
+                                $('#2h3').val(), 
+                                $('#2h4').val())
+                            .then((updated) => {
+                                if (updated) {
+                                    $("#successMessage").text("Acarreo actualizado satisfactoriamente.");
+                                } else {
+                                    $("#possibleError").text("Hubo un error al actualizar el acarreo.");
+                                }
+                            });  
+
+                        $("#update-hauling").get(0).reset();
+                    }
                 }
             </script>
         </div>

@@ -64,3 +64,13 @@ body {
 .sync-log {
     text-align: left;
 }
+
+.error-label {
+    color: red;
+    font-style: italic;
+}
+
+.success-label {
+    color: lightgreen;
+    font-style: italic;
+}

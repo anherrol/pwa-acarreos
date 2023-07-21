@@ -31,7 +31,7 @@
         </header>
         <div class="clearfix"></div>
         <div class="container">
-            <form>
+            <form id="frm-diesel-dispatching">
                 <div class="form-group">
                     <label for="machinesList" class="form-label">Maquina a cargarle diesel</label>
                     <input class="form-control" list="machinesListOptions" id="machinesList" placeholder="Buscar maquinaria...">
@@ -48,6 +48,10 @@
                 <div class="form-group">
                     <input type="button" class="btn btn-primary form-control" onclick="guardarDespacho();" value="Guardar Despacho de Diesel">
                 </div>
+                <br />
+                <div class="form-group">
+                    <label id="possibleError" class="form-label error-label"></label>
+                </div>
             </form>
         </div>
         <script>
@@ -56,6 +60,7 @@
 
             // recover trucklist and fill datalist
             localRepository
+                .catalogs
                 .getMachines()
                 .then(machinery => {
                     let dtlMachinery = document.getElementById('machinesListOptions')
@@ -64,13 +69,55 @@
                         dtlMachinery.appendChild(new Option(element.qrcode, element.description));
                     });
                 });
-            
-            function limpiarLista(lista) {
-                lista.value = '';
-            }
+        </script>
 
+        <script>
+            <!-- Validación de controles -->
+            function validateNewDieselDispatchingInputs() {
+                var result = true;
+                var message = '';
+                var focusControl = '';
+
+                if ($('#machinesList').val() === '') {
+                    result = false;
+                    focusControl = 'machinesList';
+                    message = 'Debe seleccionar una máquina válida.';
+                }
+
+                if (result && $('#dispatchedDiesel').val() === '') {
+                    result = false;
+                    focusControl = 'dispatchedDiesel';
+                    message = 'Debe seleccionar una cantidad de diesel despachado válido.';
+                }
+
+                $('#possibleError').text(message);
+                
+                if (message !== '') {
+                    $('#' + focusControl).focus();
+                }
+
+                return result;
+            }
+            
             function guardarDespacho() {
-                console.log('Guardar despacho de diesel');
+                if (validateNewDieselDispatchingInputs()) {
+                    console.log('Guardar despacho de combustible');
+                    var localRepository = new LocalRepository();
+                    var parameters = new Parameters();
+                    var operatorId = 0;
+
+                    parameters
+                        .get("userData")
+                        .then(model => { 
+                            if (model) {
+                                operatorId = model.data.userId;
+                            }
+
+                            localRepository.dieselDispatching.storeDieselDispatching($('#machinesList').val(), $('#dispatchedDiesel').val(), operatorId);
+
+                            $("#frm-diesel-dispatching").get(0).reset();
+                        });
+                }
             }
         </script>
     </body>

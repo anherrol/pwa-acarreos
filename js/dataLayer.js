@@ -1,5 +1,5 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
-    var BASE_API_URL = 'https://acarreos-dev-api.azurewebsites.net/api/';
+    var BASE_API_URL = 'https://localhost:7065/api/'; // 'https://acarreos-dev-api.azurewebsites.net/api/';
 }
 
 function AuthProxy() {
@@ -16,10 +16,14 @@ function AuthProxy() {
             { 'userKey': username, 'userPassword': password }, 
             (model) => {
                 if (model) {
+                    operatorId = model.userId;
                     loginResult = model;
+
+                    var parameters = new Parameters();
+                    parameters.store("userData", model);
                 
-                    $("body").load("menu.html").hide().fadeIn(1500).delay(6000);
-                    // window.location.href = "menu.html";
+                    //$("body").load("menu.html").hide().fadeIn(1500).delay(6000);
+                    window.location.href = "menu.html";
                 }
                 else {
                     $('#loginForm').shake();
@@ -32,6 +36,13 @@ function AuthProxy() {
             }
         );
     };
+
+    // login service
+    this.closeSession = function () {
+        var parameters = new Parameters();
+
+        parameters.delete("userData");
+    }
 }
 
 function CatalogsProxy() {
@@ -51,6 +62,42 @@ function CatalogsProxy() {
     };
 }
 
+function DieselDispatching() {
+    this.service = 'dieseldispatching/';
+    this.ajaxService = new ServiceProxy(BASE_API_URL);
+
+    this.storeDieselDispatching = function(machineId, quantity, operatorId) {
+        this.localRepository.dieselDispatching.storeDieselDispatching(machineId, quantity, operatorId);
+    }
+
+    this.pushDieselDispatching = function (equipmentId, quantity, operatorId, successCallBack) {
+        this.ajaxService.callGetService( 
+            this.service,
+            null, 
+            successCallBack, 
+            (jqXhr, textStatus, errorMessage) => {
+                $("#error").html(`Error${errorMessage}`);
+            }
+        );
+    };
+}
+
+function Parameters() {
+    this.localRepository = new LocalRepository();
+
+    this.store = function (name, value) {
+        this.localRepository.parameters.storeParameter(name, value);
+    };
+
+    this.get = function (name) {
+        return this.localRepository.parameters.getParameter(name);
+    }
+
+    this.delete = function (name) {
+        return this.localRepository.parameters.deleteParameter(name);
+    }
+}
+
 function syncData() {
     $("#syncLog").empty();
 
@@ -58,13 +105,13 @@ function syncData() {
     var localRepository = new LocalRepository();
 
     var catalogs = { 
-        'tractortruckcatalog' : [ 'Tractocamiones', (data) => { for (var i = 0; i < data.length; i++) localRepository.storeTrucks(data[i]);  } ], 
-        'driverscatalog': [ 'Conductores', (data) => { for (var i = 0; i < data.length; i++) localRepository.storeDrivers(data[i]); } ], 
-        'gondolascatalog': [ 'Góndolas', (data) => { for (var i = 0; i < data.length; i++) localRepository.storeGondolas(data[i]); } ], 
-        'operators': [ 'Operadores', (data) => { for (var i = 0; i < data.length; i++) localRepository.storeOperators(data[i]); } ], 
-        'machines': [ 'Maquinaria', (data) => { for (var i = 0; i < data.length; i++) localRepository.storeMachines(data[i]); } ], 
-        'machineoperators': [ 'Operadores de maquinaria', (data) => { for (var i = 0; i < data.length; i++) localRepository.storeMachineOperators(data[i]); } ], 
-        'eventtypes': [ 'Tipos de eventos', (data) => { for (var i = 0; i < data.length; i++) localRepository.storeEventTypes(data[i]); } ]
+        'tractortruckcatalog' : [ 'Tractocamiones', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeTrucks(data[i]);  } ], 
+        'driverscatalog': [ 'Conductores', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeDrivers(data[i]); } ], 
+        'gondolascatalog': [ 'Góndolas', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeGondolas(data[i]); } ], 
+        'operators': [ 'Operadores', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeOperators(data[i]); } ], 
+        'machines': [ 'Maquinaria', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeMachines(data[i]); } ], 
+        'machineoperators': [ 'Operadores de maquinaria', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeMachineOperators(data[i]); } ], 
+        'eventtypes': [ 'Tipos de eventos', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeEventTypes(data[i]); } ]
     };
 
     Object.keys(catalogs).forEach(key => {

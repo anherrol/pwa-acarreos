@@ -31,7 +31,7 @@
         </header>
         <div class="clearfix"></div>
         <div class="container">
-            <form id="create-haulling">
+            <form id="create-hauling">
                 <div class="form-group">
                     <label for="truckList" class="form-label">Tractocamiones</label>
                     <input class="form-control" list="trukListOptions" id="truckList" placeholder="Buscar tractocamión...">
@@ -68,6 +68,10 @@
                 <br />
                 <div class="form-group">
                     <input type="button" class="btn btn-primary form-control" onclick="guardarAcarreo();" value="Guardar Acarreo">
+                </div> 
+                <br />
+                <div class="form-group">
+                    <label id="possibleError" class="form-label error-label"></label>
                 </div>
             </form>
         </div>
@@ -77,6 +81,7 @@
 
             // recover trucklist and fill datalist
             localRepository
+                .catalogs
                 .getTrucks()
                 .then(trucks => {
                     let dtlTrucks = document.getElementById('trukListOptions')
@@ -85,31 +90,77 @@
                         dtlTrucks.appendChild(new Option(element.qrcode, element.description));
                     });
                 });
+
             localRepository
+                .catalogs
                 .getGondolas()
-                .then(trucks => {
+                .then(firstGondolas => {
                     let dtlGondolas = document.getElementById('gondolaListOptions')
 
-                    trucks.forEach(element => {
+                    firstGondolas.forEach(element => {
                         dtlGondolas.appendChild(new Option(element.qrcode, element.description));
                     });
                 });
+
             localRepository
+                .catalogs
                 .getGondolas()
-                .then(trucks => {
+                .then(secondGondolas => {
                     let dtlSecondGondolas = document.getElementById('secondGondolaListOptions')
 
-                    trucks.forEach(element => {
+                    secondGondolas.forEach(element => {
                         dtlSecondGondolas.appendChild(new Option(element.qrcode, element.description));
                     });
                 });
 
-            function limpiarLista(lista) {
-                lista.value = '';
-            }
+            <!-- Validación de controles -->
+            function validateNewHaulingInputs() {
+                var result = true;
+                var message = '';
+                var focusControl = '';
 
+                if ($('#truckList').val() === '') {
+                    result = false;
+                    focusControl = 'truckList';
+                    message = 'Debe seleccionar un tractocamión válido.';
+                }
+
+                if (result && $('#gondolaList').val() === '') {
+                    result = false;
+                    focusControl = 'gondolaList';
+                    message = 'Debe seleccionar una primer góndola válida.';
+                }
+
+                if (result && $('#primerTonelaje').val() === '') {
+                    result = false;
+                    focusControl = 'primerTonelaje';
+                    message = 'Debe seleccionar un primer pesaje válido.';
+                }
+
+                $('#possibleError').text(message);
+                
+                if (message !== '') {
+                    $('#' + focusControl).focus();
+                }
+
+                return result;
+            }
+            
             function guardarAcarreo() {
-                console.log('Guardar acarreo');
+                if (validateNewHaulingInputs()) {
+                    console.log('Guardar de nuevos acarreos.');
+                    
+                    var localRepository = new LocalRepository();
+
+                    localRepository.haulings.storeNewHauling(
+                        $('#truckList').val(), 
+                        $('#gondolaList').val(), 
+                        $('#primerTonelaje').val(), 
+                        $('#secondGondolaList').val(), 
+                        $('#segundoTonelaje').val());
+
+                    $("#create-hauling").get(0).reset();
+                }
             }
         </script>
     </body>

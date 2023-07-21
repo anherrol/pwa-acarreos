@@ -31,7 +31,7 @@
         </header>
         <div class="clearfix"></div>
         <div class="container">
-            <form>
+            <form id="frm-creation-of-events">
                 <div class="form-group">
                     <label for="machinesList" class="form-label">Maquina a reportar</label>
                     <input list="machinesListOptions" class="form-control" id="machinesList" placeholder="Buscar maquinaria...">
@@ -58,6 +58,10 @@
                 <div class="form-group">
                     <input type="button" class="btn btn-primary form-control" onclick="guardarEvento();" value="Guardar Evento en la Maquinaria">
                 </div>
+                <br />
+                <div class="form-group">
+                    <label id="possibleError" class="form-label error-label"></label>
+                </div>
             </form>
         </div>
         <script>
@@ -66,6 +70,7 @@
 
             // recover trucklist and fill datalist
             localRepository
+                .catalogs
                 .getMachines()
                 .then(machinery => {
                     let dtlMachinery = document.getElementById('machinesListOptions')
@@ -74,7 +79,9 @@
                         dtlMachinery.appendChild(new Option(element.qrcode, element.description));
                     });
                 });
+
             localRepository
+                .catalogs
                 .getEventTypes()
                 .then(eventTypes => {
                     let dtlEventTypes = document.getElementById('eventTypeList')
@@ -84,12 +91,64 @@
                     });
                 });
             
-            function limpiarLista(lista) {
-                lista.value = '';
-            }
+            <!-- Validación de controles -->
+            function validateEventCreationInputs() {
+                var result = true;
+                var message = '';
+                var focusControl = '';
 
-            function guardarDespacho() {
-                console.log('Guardar evento en la maquinaria');
+                if ($('#machinesList').val() === '') {
+                    result = false;
+                    focusControl = 'machinesList';
+                    message = 'Debe seleccionar una máquina válida.';
+                }
+
+                if (result && $('#hourMeter').val() === '') {
+                    result = false;
+                    focusControl = 'hourMeter';
+                    message = 'Debe seleccionar un nivel de horómetro válido.';
+                }
+
+                if (result && $('#eventTypeList').val() === '') {
+                    result = false;
+                    focusControl = 'eventTypeList';
+                    message = 'Debe seleccionar un tipo de evento válido.';
+                }
+
+                $('#possibleError').text(message);
+                
+                if (message !== '') {
+                    $('#' + focusControl).focus();
+                }
+
+                return result;
+            }
+            
+            function guardarEvento() {
+                if (validateEventCreationInputs()) {
+                    console.log('Guardado de creación de eventos.');
+                    var localRepository = new LocalRepository();
+                    var parameters = new Parameters();
+                    var operatorId = 0;
+
+                    parameters
+                        .get("userData")
+                        .then(model => { 
+                            if (model) {
+                                operatorId = model.data.userId;
+                            }
+
+                            // machineId, hourmeter, eventType, observations, operatorId
+                            localRepository.creationOfEvents.storeCreationOfEvent(
+                                $('#machinesList').val(), 
+                                $('#hourMeter').val(), 
+                                $('#eventTypeList').val(), 
+                                $('#observations').val(), 
+                                operatorId);
+
+                            $("#frm-creation-of-events").get(0).reset();
+                        });
+                }
             }
         </script>
     </body>

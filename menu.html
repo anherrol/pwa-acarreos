@@ -61,9 +61,16 @@
                 </div>
                 <br />
                 <div class="form-group">
-                    <a class="btn btn-outline-primary btn-lg btn-menu" href="./" role="button">Cerrar sesión</a>
+                    <a class="btn btn-outline-primary btn-lg btn-menu" href="./" role="button" id="btnCloseSession" onclick="closeSession()">Cerrar sesión</a>
                 </div>
             </form>
         </div>
+        <script>
+            function closeSession() {
+                let authDL = new AuthProxy();
+        
+                authDL.closeSession();
+            }
+        </script>
     </body>
 </html>

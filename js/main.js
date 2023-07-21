@@ -11,7 +11,7 @@ if (!previousLoading) {
             .then(res => console.log('serviceWorker cargado correctamente.', res))
             .catch(err => console.log('serviceWorker no se ha podido registrar.', err))
     } else {
-        console.log('No puedes');
+        console.log('No puedes generarse una pwa');
     }
 
     $(document).ready(function () {
@@ -29,4 +29,8 @@ if (!previousLoading) {
             return false;
         });
     });
+            
+    function limpiarLista(lista) {
+        lista.value = '';
+    }
 }
