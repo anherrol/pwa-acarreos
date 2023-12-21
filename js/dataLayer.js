@@ -7,20 +7,20 @@ function AuthProxy() {
     this.ajaxService = new ServiceProxy(BASE_API_URL);
 
     // login service
-    this.loginService = function (username, password) {
+    this.loginService = async function (username, password) {
         // your callback down here
         var loginResult;
 
         this.ajaxService.callPostService( 
             this.service + 'login',
             { 'userKey': username, 'userPassword': password }, 
-            (model) => {
+            async (model) => {
                 if (model) {
                     operatorId = model.userId;
                     loginResult = model;
 
                     var parameters = new Parameters();
-                    parameters.store("userData", model);
+                    await parameters.store("userData", model);
                 
                     //$("body").load("menu.html").hide().fadeIn(1500).delay(6000);
                     window.location.href = "menu.html";
@@ -38,10 +38,24 @@ function AuthProxy() {
     };
 
     // login service
-    this.closeSession = function () {
+    this.closeSession = async function () {
         var parameters = new Parameters();
 
-        parameters.delete("userData");
+        await parameters.delete("userData");
+    }
+
+    // sync job places
+    this.getJobPLaces = function(successCallBack) {
+        let action = 'jobplaces';
+
+        this.ajaxService.callGetService( 
+            this.service + action,
+            null, 
+            successCallBack, 
+            (jqXhr, textStatus, errorMessage) => {
+                $("#error").html(`Error${errorMessage}`);
+            }
+        );
     }
 }
 
@@ -85,45 +99,130 @@ function DieselDispatching() {
 function Parameters() {
     this.localRepository = new LocalRepository();
 
-    this.store = function (name, value) {
-        this.localRepository.parameters.storeParameter(name, value);
+    this.store = async function (name, value) {
+        await this.localRepository.parameters.storeParameter(name, value);
     };
 
-    this.get = function (name) {
-        return this.localRepository.parameters.getParameter(name);
+    this.get = async function (name) {
+        return await this.localRepository.parameters.getParameter(name);
     }
 
-    this.delete = function (name) {
-        return this.localRepository.parameters.deleteParameter(name);
+    this.delete = async function (name) {
+        return await this.localRepository.parameters.deleteParameter(name);
     }
 }
 
-function syncData() {
-    $("#syncLog").empty();
+function HaulingsProxy() {
+    this.service = 'hauling/';
+    this.ajaxService = new ServiceProxy(BASE_API_URL);
 
-    var catalogsProxy = new CatalogsProxy();
-    var localRepository = new LocalRepository();
+    this.getHaulingsForTargets = function (jobPlaceId, successCallBack) {
+        let action = 'HaulingsForTargets'
 
-    var catalogs = { 
-        'tractortruckcatalog' : [ 'Tractocamiones', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeTrucks(data[i]);  } ], 
-        'driverscatalog': [ 'Conductores', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeDrivers(data[i]); } ], 
-        'gondolascatalog': [ 'Góndolas', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeGondolas(data[i]); } ], 
-        'operators': [ 'Operadores', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeOperators(data[i]); } ], 
-        'machines': [ 'Maquinaria', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeMachines(data[i]); } ], 
-        'machineoperators': [ 'Operadores de maquinaria', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeMachineOperators(data[i]); } ], 
-        'eventtypes': [ 'Tipos de eventos', (data) => { for (var i = 0; i < data.length; i++) localRepository.catalogs.storeEventTypes(data[i]); } ]
-    };
+        this.ajaxService.callGetService( 
+            this.service + action,
+            "jobPlaceId=" + jobPlaceId, 
+            successCallBack, 
+            (jqXhr, textStatus, errorMessage) => {
+                $("#error").html(`Error${errorMessage}`);
+            }
+        );
+    }
 
-    Object.keys(catalogs).forEach(key => {
-        catalogsProxy.getData(key, 
+    this.getHaulingsForSources = function (jobPlaceId, successCallBack) {
+        let action = 'HaulingsForSources'
+
+        this.ajaxService.callGetService( 
+            this.service + action,
+            "jobPlaceId=" + jobPlaceId, 
+            successCallBack, 
+            (jqXhr, textStatus, errorMessage) => {
+                $("#error").html(`Error${errorMessage}`);
+            }
+        );
+    }
+}
+
+function SyncData() {
+    this.localRepository = new LocalRepository();
+
+    this.syncCatalogs = function() {
+        $("#syncLog").empty();
+
+        var catalogs = { 
+            'tractortruckcatalog' : [ 'Tractocamiones', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeTrucks(data[i]);  } ], 
+            'driverscatalog': [ 'Conductores', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeDrivers(data[i]); } ], 
+            'gondolascatalog': [ 'Góndolas', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeGondolas(data[i]); } ], 
+            'operators': [ 'Operadores', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeOperators(data[i]); } ], 
+            'machines': [ 'Maquinaria', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeMachines(data[i]); } ], 
+            'machineoperators': [ 'Operadores de maquinaria', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeMachineOperators(data[i]); } ], 
+            'eventtypes': [ 'Tipos de eventos', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeEventTypes(data[i]); } ], 
+        };
+
+        var catalogsProxy = new CatalogsProxy();
+        Object.keys(catalogs).forEach(key => {
+            catalogsProxy.getData(key, 
+                (data) => {
+                    if (data) {
+                        catalogs[key][1].call(this, data.data);
+
+                        $("#syncLog").append(`<li class="list-group-item">${catalogs[key][0]}</li>`);
+                    } else {
+                        $("#error").html("<span style='color:#cc0000'>Error:</span> Usuario y contraseña inválidos.");
+                    }
+                });
+            });
+        
+        var authProxy = new AuthProxy();
+        authProxy.getJobPLaces(
             (data) => {
                 if (data) {
-                    catalogs[key][1].call(this, data.data);
+                    for (var i = 0; i < data.length; i++) {
+                        this.localRepository.catalogs.storeJobPlaces(data[i]); 
+                    }
 
-                    $("#syncLog").append(`<li class="list-group-item">${catalogs[key][0]}</li>`);
+                    $("#syncLog").append(`<li class="list-group-item">Lugares de Trabajo</li>`);
                 } else {
                     $("#error").html("<span style='color:#cc0000'>Error:</span> Usuario y contraseña inválidos.");
                 }
-            });
+            }
+        )
+    };
+
+    this.syncHaulings = async function() {
+        let parametersRepository = new Parameters();
+
+        // obtenemos el id del lugar de trabajo del usuario
+        let userData = await parametersRepository.get("userData");
+        let jobPlaceId = userData.data.jobPlaceId;
+        let jobPlacesCatalog = await this.localRepository.catalogs.getJobPlaces();
+        let jobPlace;
+
+        // obtenemos el lugar de trabajo de la persona
+        jobPlacesCatalog.every(eachJobPlace => {
+            if (eachJobPlace.id === jobPlaceId) {
+                jobPlace = eachJobPlace;
+                return false;
+            }
+
+            return true;
         });
+
+        let haulingsProxy = new HaulingsProxy();
+
+        // bajar haulings correspondientes a este lugar de trabajo
+        let haulingProcess = (data) => {
+            if (data.length > 0) {
+                console.log(data);
+            }
+        };
+
+        if (jobPlace.esMina) {
+            haulingsProxy.getHaulingsForTargets(jobPlaceId, haulingProcess);
+        } else {
+            haulingsProxy.getHaulingsForSources(jobPlaceId, haulingProcess);
+        }
+
+        // subir haulings actualizados
+    }
 }

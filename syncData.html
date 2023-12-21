@@ -32,12 +32,22 @@
         <div class="clearfix"></div>
         <div id="slider">
             <div class="form-group">
-                <button class="btn btn-primary btn-lg btn-menu" onclick="syncData();">Sincronizar data</button>
+                <button class="btn btn-primary btn-lg btn-menu" onclick="syncEverything();">Sincronizar data</button>
             </div>
             <br />
             <div class="form-group">
                 <ul class="list-group list-group-numbered sync-log" id="syncLog"></ul>
             </div>
         </div>
+
+        <script>
+            async function syncEverything() {
+                let dataSync = new SyncData();
+
+                await dataSync.syncCatalogs();
+
+                await dataSync.syncHaulings();
+            }
+        </script>
     </body>
 </html>

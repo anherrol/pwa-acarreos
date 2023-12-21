@@ -10,7 +10,7 @@ if (typeof LocalRepository === "undefined") {
         }
 
         // Define a schema
-        db.version(1)
+        db.version(1.1)
             .stores({
                 trucks: 'id, qrcode, description', 
                 drivers: 'id, qrcode, description', 
@@ -22,7 +22,8 @@ if (typeof LocalRepository === "undefined") {
                 parameters: 'id, value', 
                 dieselDispatchings: 'id, machineId, quantity, operatorId', 
                 creationOfEvents: 'id, machineId, hourmeter, eventType, observations, operatorId', 
-                haulings: 'id, truckId, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status'
+                haulings: 'id, truckId, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status', 
+                jobplaces: 'id, nombre, prefijoBoletas, lugarOrigen, numeroFrente, numeroLote, esMina'
             });
 
         // Open the database
@@ -32,24 +33,16 @@ if (typeof LocalRepository === "undefined") {
             });
 
         this.Parameters = function () {
-            this.storeParameter = function (name, data) {
-                db.parameters
-                    .put({id: name, data: data})
-                    .catch((error) => {
-                        console.error("Failed to add new truck. Error: " + error.message);
-                        return Promise.reject(error);
-                    });    
+            this.storeParameter = async function (name, data) {
+                await db.parameters.put({id: name, data: data});
             }
 
-            this.getParameter = function (name) {
-                return db.parameters
-                    .where({id: name})
-                    .first();
+            this.getParameter = async function (name) {
+                return await db.parameters.where({id: name}).first();
             }
 
-            this.deleteParameter = function (name) {
-                return db.parameters
-                    .delete(name)
+            this.deleteParameter = async function (name) {
+                await db.parameters.delete(name);
             }
         }
 
@@ -98,13 +91,38 @@ if (typeof LocalRepository === "undefined") {
                 return db.haulings
                     .update(id, {status: 'finalizado'});
             };
+
+            this.storeHauling = (truckId, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status) => {
+                db.haulings
+                    .put({
+                        id: uuidv4(), truckId: truckId, 
+                        gondolaOneId: gondolaOneId, weightOne: weightOne, hOne1: hOne1, hOne2: hOne2, hOne3: hOne3, hOne4: hOne4, 
+                        gondolaTwoId: gondolaTwoId, weightTwo: weightTwo, hTwo1: hTwo1, hTwo2: hTwo2, hTwo3: hTwo3, hTwo4: hTwo4, 
+                        status: status
+                    })
+                    .catch((error) => {
+                        console.error("Failed to store hauling. Error: " + error);
+                        return Promise.reject(error);
+                    });
+            };
         }
 
         this.Catalogs = function () {
+            // Job Places
+            this.storeJobPlaces = async function (data) {
+                await db
+                    .jobplaces
+                    .put({ id: data.id, nombre: data.nombre, prefijoBoletas: data.prefijoBoletas, lugarOrigen: data.lugarOrigen, numeroFrente: data.numeroFrente, numeroLote: data.numeroLote, esMina: data.esMina });
+            }
+
+            this.getJobPlaces = async function () {
+                return await db.jobplaces.toArray();
+            }
+
             // Trucks
             this.storeTrucks = function (data) {
                 db.trucks
-                    .add({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
                     .catch((error) => {
                         console.error("Failed to add new truck. Error: " + error);
                         return Promise.reject(error);
@@ -118,7 +136,7 @@ if (typeof LocalRepository === "undefined") {
             // Drivers
             this.storeDrivers = function (data) {
                 db.drivers
-                    .add({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
                     .catch((error) => {
                         console.error("Failed to add new driver. Error: " + error);
                         return Promise.reject(error);
@@ -128,7 +146,7 @@ if (typeof LocalRepository === "undefined") {
             // Gondolas
             this.storeGondolas = function (data) {
                 db.gondolas
-                    .add({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
                     .catch((error) => {
                         console.error("Failed to add new gondola. Error: " + error);
                         return Promise.reject(error);
@@ -142,7 +160,7 @@ if (typeof LocalRepository === "undefined") {
             // operators
             this.storeOperators = function (data) {
                 db.operators
-                    .add({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
                     .catch((error) => {
                         console.error("Failed to add new operator. Error: " + error);
                         return Promise.reject(error);
@@ -152,7 +170,7 @@ if (typeof LocalRepository === "undefined") {
             // machinery
             this.storeMachines = function (data) {
                 db.machines
-                    .add({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
                     .catch((error) => {
                         console.error("Failed to add new machine. Error: " + error);
                         return Promise.reject(error);
@@ -166,7 +184,7 @@ if (typeof LocalRepository === "undefined") {
             // Machine operators
             this.storeMachineOperators = function (data) {
                 db.machineoperators
-                    .add({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
                     .catch((error) => {
                         console.error("Failed to add new machine operator. Error: " + error);
                         return Promise.reject(error);
@@ -176,7 +194,7 @@ if (typeof LocalRepository === "undefined") {
             // Event Types
             this.storeEventTypes = function (data) {
                 db.eventtypes
-                    .add({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
                     .catch((error) => {
                         console.error("Failed to add new event type. Error: " + error);
                         return Promise.reject(error);

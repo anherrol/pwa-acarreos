@@ -33,7 +33,7 @@ if (typeof ServiceProxy === "undefined") {
             };
 
             if (dataParameter != null) {
-                ajaxOptions[data] = dataParameter;
+                ajaxOptions['data'] = dataParameter;
             }
 
             $.ajax(ajaxOptions);
