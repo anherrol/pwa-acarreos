@@ -13,7 +13,7 @@
         <script src="js/jquery-3.7.0.min.js"></script>
         <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+        <script src="js/dexie.js"></script>
 
         <!-- Librerías propias -->
         <script src="js/localRepository.js"></script>
@@ -39,12 +39,23 @@
                     <datalist id="trukListOptions">
                     </datalist>
                 </div> 
-                <br /> 
+                <br />  
                 <div class="form-group">
                     <label for="gondolaList" class="form-label">Primera góndola</label>
                     <input class="form-control" list="gondolaListOptions" id="gondolaList" placeholder="Buscar primera góndola..." disabled="disabled">
                     <datalist id="gondolaListOptions">
                     </datalist>
+                </div> 
+                <br /> 
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="firstGondolaVolume" class="form-label">Volúmen original</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" id="firstOriginalVolume" placeholder="0" disabled="disabled"><div class="row">
+                        </div>
+                    </div>
                 </div> 
                 <br /> 
                 <div class="form-group">
@@ -69,10 +80,19 @@
                 <br />
                 <div class="form-group">
                     <label for="secondGondolaList" class="form-label">Segunda góndola</label>
-                    <input class="form-control" list="secondGondolaListOptions" id="secondGondolaList" placeholder="Buscar segunda góndola..." disabled="disabled">
-                    <datalist id="secondGondolaListOptions">
-                    </datalist>
-                </div> 
+                    <input class="form-control" id="secondGondolaVolume" placeholder="Buscar segunda góndola..." disabled="disabled">
+                </div>
+                <br /> 
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="secondGondolaVolume" class="form-label">Volúmen original</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" id="secondOriginalVolume" placeholder="0" disabled="disabled">
+                        </div>
+                    </div>
+                </div>  
                 <br />
                 <div class="form-group">
                     <label class="form-label">Niveles segunda góndola</label>
@@ -109,13 +129,13 @@
     
                 // recover trucklist and fill datalist
                 localRepository
-                    .catalogs
+                    .haulings
                     .getTrucks()
                     .then(trucks => {
                         let dtlTrucks = document.getElementById('trukListOptions')
     
                         trucks.forEach(element => {
-                            dtlTrucks.appendChild(new Option(element.qrcode, element.description));
+                            dtlTrucks.appendChild(new Option(element, element));
                         });
                     });
                 localRepository
@@ -219,7 +239,7 @@
                                     var found = false;
 
                                     data.every(element => {
-                                        if (element.status === 'creado') {
+                                        if (element.status === 'en ruta') {
                                             $("#gondolaList").val(element.gondolaOneId);
                                             $("#secondGondolaList").val(element.gondolaTwoId);
                                             $("#hdnHaulingId").val(element.id);

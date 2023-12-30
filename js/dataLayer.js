@@ -1,5 +1,6 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
-    var BASE_API_URL = 'https://localhost:7065/api/'; // 'https://acarreos-dev-api.azurewebsites.net/api/';
+    //var BASE_API_URL = 'https://localhost:7065/api/'; 
+    var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
 }
 
 function AuthProxy() {
@@ -124,7 +125,7 @@ function HaulingsProxy() {
             "jobPlaceId=" + jobPlaceId, 
             successCallBack, 
             (jqXhr, textStatus, errorMessage) => {
-                $("#error").html(`Error${errorMessage}`);
+                $("#error").html(`Error: ${errorMessage}`);
             }
         );
     }
@@ -135,6 +136,71 @@ function HaulingsProxy() {
         this.ajaxService.callGetService( 
             this.service + action,
             "jobPlaceId=" + jobPlaceId, 
+            successCallBack, 
+            (jqXhr, textStatus, errorMessage) => {
+                $("#error").html(`Error${errorMessage}`);
+            }
+        );
+    }
+
+    this.storeHauling = function(userId, haulingId, tractorTruckId, driver, gondolaId1, cantidadM31, gondolaId2, cantidadM32, successCallBack) {
+        let operationDate = new Date();
+
+        this.ajaxService.callPostService( 
+            this.service,
+            {
+                "userId": userId,
+                "operationDate": operationDate,
+                "haulingId": haulingId,
+                "tractorTruckId": tractorTruckId,
+                "driver": driver,
+                "gondolas": [
+                    {
+                        "gondolaId": gondolaId1,
+                        "cantidadM3": cantidadM31
+                    }, 
+                    {
+                        "gondolaId": gondolaId2,
+                        "cantidadM3": cantidadM32
+                    }
+                ]
+            }, 
+            successCallBack, 
+            (jqXhr, textStatus, errorMessage) => {
+                $("#error").html(`Error${errorMessage}`);
+            }
+        );
+    }
+
+    this.updateHauling = function(userId, haulingId, tractorTruckId, driver, gondolaId1, h11, h21, h31, h41, gondolaId2, h12, h22, h32, h42, successCallBack) {
+        let operationDate = new Date();
+
+        this.ajaxService.callPutService( 
+            this.service,
+            haulingId,
+            {
+                "userId": userId,
+                "operationDate": "2023-12-22T15:21:23.130Z",
+                "haulingId": haulingId,
+                "tractorTruckId": tractorTruckId,
+                "driver": driver,
+                "gondolas": [
+                    {
+                        "gondolaId": gondolaId1,
+                        "h1": h11,
+                        "h2": h21,
+                        "h3": h31,
+                        "h4": h41
+                    }, 
+                    {
+                        "gondolaId": gondolaId2,
+                        "h1": h12,
+                        "h2": h22,
+                        "h3": h32,
+                        "h4": h42
+                    }
+                ]
+            }, 
             successCallBack, 
             (jqXhr, textStatus, errorMessage) => {
                 $("#error").html(`Error${errorMessage}`);
@@ -195,6 +261,7 @@ function SyncData() {
         // obtenemos el id del lugar de trabajo del usuario
         let userData = await parametersRepository.get("userData");
         let jobPlaceId = userData.data.jobPlaceId;
+        let userId = userData.data.userId;
         let jobPlacesCatalog = await this.localRepository.catalogs.getJobPlaces();
         let jobPlace;
 
@@ -210,19 +277,76 @@ function SyncData() {
 
         let haulingsProxy = new HaulingsProxy();
 
-        // bajar haulings correspondientes a este lugar de trabajo
-        let haulingProcess = (data) => {
-            if (data.length > 0) {
-                console.log(data);
-            }
-        };
-
         if (jobPlace.esMina) {
-            haulingsProxy.getHaulingsForTargets(jobPlaceId, haulingProcess);
-        } else {
-            haulingsProxy.getHaulingsForSources(jobPlaceId, haulingProcess);
-        }
+            // descargar actualización de haulings para cierre
+            //     haulingsProxy.getHaulingsForSources(jobPlaceId, haulingProcess);
 
-        // subir haulings actualizados
+            // updload only new haulings
+            var newHaulings = await this.localRepository.haulings.getLocalNewHaulings(); 
+            newHaulings.every((newHauling) => { 
+                haulingsProxy.storeHauling(
+                    userId, 
+                    newHauling.id, 
+                    newHauling.truckId, 
+                    '12', 
+                    newHauling.gondolaOneId, 
+                    newHauling.weightOne, 
+                    newHauling.gondolaTwoId, 
+                    newHauling.weightOne,
+                    (data, status) => {
+                        if (status == 'success') {
+                            // se actualiza el hauling local, para no volver a subirlo
+                            this.localRepository.haulings.updateHaulingStatus(newHauling.id, 'en ruta');
+                        }
+                    });
+
+                return true;
+            });
+        } else {
+            // descargar haulings para recepción
+            haulingsProxy.getHaulingsForTargets(jobPlaceId, 
+                (data) => {
+                    if (data.length > 0) {
+                        data.every((hauling) => {
+                            var previousHauling = this.
+                                localRepository.
+                                haulings.
+                                getHaulingById(hauling.acarreoId)
+                                .then(data => {
+                                    if (data.length == 0) {
+                                        this.localRepository.haulings.storeHauling(
+                                            hauling.acarreoId, 
+                                            hauling.tractocamion, 
+                                            hauling.operadorId,
+                                            hauling.fechaDespacho, 
+                                            hauling.gondolaId1, hauling.cantidadM31, 0, 0, 0, 0, 
+                                            hauling.gondolaId2, hauling.cantidadM32, 0, 0, 0, 0, 
+                                            'en ruta');        
+                                    }
+                                })
+
+                            
+                            return true;
+                        });
+                    }
+                });
+
+            // subir haulings actualizados
+            var newHaulings = await this.localRepository.haulings.getLocalReceivedHaulings(); 
+            newHaulings.every(hauling => {
+                haulingsProxy.updateHauling(
+                    userId, 
+                    hauling.id, 
+                    hauling.truckId, 
+                    '', 
+                    hauling.gondolaOneId, 
+                    hauling.hOne1, hauling.hOne2, hauling.hOne3, hauling.hOne4, 
+                    hauling.gondolaTwoId, 
+                    hauling.hTwo1, hauling.hTwo2, hauling.hTwo3, hauling.hTwo4, 
+                    (data, status) => { });
+
+                return true;
+            });
+        }
     }
 }

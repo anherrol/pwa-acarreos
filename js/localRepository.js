@@ -73,13 +73,25 @@ if (typeof LocalRepository === "undefined") {
                 return db.haulings.where({truckId: truckId}).toArray();
             }
 
+            this.getHaulingById = (id) => {
+                return db.haulings.where({id: id, status: 'recibido'}).toArray();
+            }
+
+            this.getLocalNewHaulings = async () => {
+                return await db.haulings.where({status: 'creado'}).toArray();
+            }
+
+            this.getLocalReceivedHaulings = async () => {
+                return await db.haulings.where({status: 'recibido'}).toArray();
+            }
+
             this.storeNewHauling = (truckId, gondolaOneId, weightOne, gondolaTwoId, weightTwo) => {
                 db.haulings
                     .add({id: uuidv4(), truckId: truckId, gondolaOneId: gondolaOneId, weightOne: weightOne, gondolaTwoId: gondolaTwoId, weightTwo: weightTwo, status: 'creado'})
                     .catch((error) => {
                         console.error("Failed to add new hauling. Error: " + error);
                         return Promise.reject(error);
-                    });   
+                    }); 
             };
 
             this.updateHaulingReception = (id, hOne1, hOne2, hOne3, hOne4, hTwo1, hTwo2, hTwo3, hTwo4) => {
@@ -90,6 +102,11 @@ if (typeof LocalRepository === "undefined") {
             this.updateHaulingFinalization = (id) => {
                 return db.haulings
                     .update(id, {status: 'finalizado'});
+            };
+
+            this.updateHaulingStatus = (id, status) => {
+                return db.haulings
+                    .update(id, {status: status});
             };
 
             this.storeHauling = (truckId, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status) => {
@@ -105,6 +122,27 @@ if (typeof LocalRepository === "undefined") {
                         return Promise.reject(error);
                     });
             };
+
+            this.storeHauling = (id, truckId, operatorId, dispatchDate, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status) => {
+                db.haulings
+                    .put({
+                        id: id, 
+                        truckId: truckId, 
+                        operatorId: operatorId, 
+                        dispatchDate: dispatchDate, 
+                        gondolaOneId: gondolaOneId, weightOne: weightOne, hOne1: hOne1, hOne2: hOne2, hOne3: hOne3, hOne4: hOne4, 
+                        gondolaTwoId: gondolaTwoId, weightTwo: weightTwo, hTwo1: hTwo1, hTwo2: hTwo2, hTwo3: hTwo3, hTwo4: hTwo4, 
+                        status: status
+                    })
+                    .catch((error) => {
+                        console.error("Failed to store hauling. Error: " + error);
+                        return Promise.reject(error);
+                    });
+            };
+
+            this.getTrucks = () => {
+                return db.haulings.orderBy('truckId').keys();
+            }
         }
 
         this.Catalogs = function () {

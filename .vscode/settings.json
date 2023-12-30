@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/28dd83e7-d655-4280-87b5-eb77fd4d7039/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/AcarreosPWA",
+    "appService.deploySubpath": "."
+}
