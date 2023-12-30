@@ -14,7 +14,7 @@
         <script src="js/jquery-3.7.0.min.js"></script>
         <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/dexie.js"></script>
+        <script src="js/dexie.min.js"></script>
 
         <!-- Librerías propias -->
         <script src="js/serviceProxy.js"></script>
@@ -36,14 +36,15 @@
         <div class="clearfix"></div>
         <div id="slider">
             <form>
-                <div class="form-group">
+                <div class="form-group createHaulingDiv">
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./createHauling.html" role="button">Crear Acarreo</a>
                 </div>
-                <br />
-                <div class="form-group">
+                <br class="createHaulingDiv" />
+                <div class="form-group receiveHaulingDiv">
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./receiveHauling.html" role="button">Recibir Acarreo</a>
                 </div>
-                <br />
+                <br class="receiveHaulingDiv" />
+                <!--
                 <div class="form-group">
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./finalizeHauling.html" role="button">Finalizar Acarreo</a>
                 </div>
@@ -56,6 +57,7 @@
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./createEvent.html" role="button">Registrar Evento</a>
                 </div>
                 <br />
+                -->
                 <div class="form-group">
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./syncData.html" role="button">Sincronizar</a>
                 </div>
@@ -66,6 +68,28 @@
             </form>
         </div>
         <script>
+            // Verify Permissions
+            var jobPlaceId = 0;
+            var parameters = new Parameters();
+
+            parameters
+                .get("userData")
+                .then(model => { 
+                    if (model) {
+                        jobPlaceId = model.data.jobPlaceId;
+                    }
+
+                    if (jobPlaceId == 1) {
+                        $(".createHaulingDiv").show();
+                        $(".receiveHaulingDiv").hide();
+                    }
+
+                    if (jobPlaceId == 2) {
+                        $(".createHaulingDiv").hide();
+                        $(".receiveHaulingDiv").show();
+                    }
+                });
+
             $('#btnCloseSession').click(
                 async() => {
                     try{

@@ -13,7 +13,7 @@
         <script src="js/jquery-3.7.0.min.js"></script>
         <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/dexie.js"></script>
+        <script src="js/dexie.min.js"></script>
 
         <!-- Librerías propias -->
         <script src="js/localRepository.js"></script>
@@ -39,12 +39,10 @@
                     <datalist id="trukListOptions">
                     </datalist>
                 </div> 
-                <br />  
+                <br /> 
                 <div class="form-group">
                     <label for="gondolaList" class="form-label">Primera góndola</label>
-                    <input class="form-control" list="gondolaListOptions" id="gondolaList" placeholder="Buscar primera góndola..." disabled="disabled">
-                    <datalist id="gondolaListOptions">
-                    </datalist>
+                    <input class="form-control" id="gondolaList" placeholder="Primera góndola" disabled="disabled">
                 </div> 
                 <br /> 
                 <div class="form-group">
@@ -53,7 +51,7 @@
                             <label for="firstGondolaVolume" class="form-label">Volúmen original</label>
                         </div>
                         <div class="col">
-                            <input class="form-control" id="firstOriginalVolume" placeholder="0" disabled="disabled"><div class="row">
+                            <input class="form-control" id="firstGondolaVolume" placeholder="0" disabled="disabled"><div class="row">
                         </div>
                     </div>
                 </div> 
@@ -80,7 +78,7 @@
                 <br />
                 <div class="form-group">
                     <label for="secondGondolaList" class="form-label">Segunda góndola</label>
-                    <input class="form-control" id="secondGondolaVolume" placeholder="Buscar segunda góndola..." disabled="disabled">
+                    <input class="form-control" id="secondGondolaList" placeholder="Segunda góndola" disabled="disabled">
                 </div>
                 <br /> 
                 <div class="form-group">
@@ -89,7 +87,7 @@
                             <label for="secondGondolaVolume" class="form-label">Volúmen original</label>
                         </div>
                         <div class="col">
-                            <input class="form-control" id="secondOriginalVolume" placeholder="0" disabled="disabled">
+                            <input class="form-control" id="secondGondolaVolume" placeholder="0" disabled="disabled">
                         </div>
                     </div>
                 </div>  
@@ -138,27 +136,6 @@
                             dtlTrucks.appendChild(new Option(element, element));
                         });
                     });
-                localRepository
-                    .catalogs
-                    .getGondolas()
-                    .then(trucks => {
-                        let dtlGondolas = document.getElementById('gondolaListOptions')
-    
-                        trucks.forEach(element => {
-                            dtlGondolas.appendChild(new Option(element.qrcode, element.description));
-                        });
-                    });
-                localRepository
-                    .catalogs
-                    .getGondolas()
-                    .then(trucks => {
-                        let dtlSecondGondolas = document.getElementById('secondGondolaListOptions')
-    
-                        trucks.forEach(element => {
-                            dtlSecondGondolas.appendChild(new Option(element.qrcode, element.description));
-                        });
-                    });
-          
                 <!-- Validación de controles -->
                 function validateUpdateHaulingInputs() {
                     var result = true;
@@ -242,6 +219,8 @@
                                         if (element.status === 'en ruta') {
                                             $("#gondolaList").val(element.gondolaOneId);
                                             $("#secondGondolaList").val(element.gondolaTwoId);
+                                            $("#firstGondolaVolume").val(element.weightOne);
+                                            $("#secondGondolaVolume").val(element.weightTwo);
                                             $("#hdnHaulingId").val(element.id);
 
                                             if (data.gondolaTwoId === '') {

@@ -1,6 +1,6 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
-    //var BASE_API_URL = 'https://localhost:7065/api/'; 
-    var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
+    var BASE_API_URL = 'https://localhost:7065/api/'; 
+    //var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
 }
 
 function AuthProxy() {
@@ -292,7 +292,7 @@ function SyncData() {
                     newHauling.gondolaOneId, 
                     newHauling.weightOne, 
                     newHauling.gondolaTwoId, 
-                    newHauling.weightOne,
+                    newHauling.weightTwo,
                     (data, status) => {
                         if (status == 'success') {
                             // se actualiza el hauling local, para no volver a subirlo
