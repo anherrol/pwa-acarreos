@@ -1,6 +1,6 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
-    var BASE_API_URL = 'https://localhost:7065/api/'; 
-    //var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
+    // var BASE_API_URL = 'https://localhost:7065/api/'; 
+    var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
 }
 
 function AuthProxy() {
