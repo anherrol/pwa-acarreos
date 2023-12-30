@@ -41,6 +41,11 @@
                 </div> 
                 <br /> 
                 <div class="form-group">
+                    <label for="bankName" class="form-label">Nombre de mina</label>
+                    <input class="form-control" id="bankName" placeholder="" disabled="disabled">
+                </div> 
+                <br /> 
+                <div class="form-group">
                     <label for="gondolaList" class="form-label">Primera góndola</label>
                     <input class="form-control" id="gondolaList" placeholder="Primera góndola" disabled="disabled">
                 </div> 
@@ -221,6 +226,7 @@
                                             $("#secondGondolaList").val(element.gondolaTwoId);
                                             $("#firstGondolaVolume").val(element.weightOne);
                                             $("#secondGondolaVolume").val(element.weightTwo);
+                                            $("#bankName").val(element.bankName);
                                             $("#hdnHaulingId").val(element.id);
 
                                             if (data.gondolaTwoId === '') {

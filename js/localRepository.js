@@ -123,7 +123,7 @@ if (typeof LocalRepository === "undefined") {
                     });
             };
 
-            this.storeHauling = (id, truckId, operatorId, dispatchDate, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status) => {
+            this.storeHauling = (id, truckId, operatorId, dispatchDate, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, bankName, status) => {
                 db.haulings
                     .put({
                         id: id, 
@@ -132,6 +132,7 @@ if (typeof LocalRepository === "undefined") {
                         dispatchDate: dispatchDate, 
                         gondolaOneId: gondolaOneId, weightOne: weightOne, hOne1: hOne1, hOne2: hOne2, hOne3: hOne3, hOne4: hOne4, 
                         gondolaTwoId: gondolaTwoId, weightTwo: weightTwo, hTwo1: hTwo1, hTwo2: hTwo2, hTwo3: hTwo3, hTwo4: hTwo4, 
+                        bankName: bankName,
                         status: status
                     })
                     .catch((error) => {

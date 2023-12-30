@@ -74,3 +74,15 @@ body {
     color: lightgreen;
     font-style: italic;
 }
+
+#trukListOptions {
+    display: none;
+}
+
+#gondolaListOptions {
+    display: none;
+}
+
+#secondGondolaListOptions {
+    display: none;
+}
