@@ -37,11 +37,11 @@
                 <div class="form-group">
                     <div class="row">
                         <input type="hidden" id="hdnHaulingId" value=""></hidden>
-                        <label for="truckList" class="form-label">Tractocamiones</label>
+                        <label for="autoComplete" class="form-label">Tractocamiones</label>
                     </div>
                     <div class="row">
                         <div class="autoComplete_wrapper" role="combobox" aria-owns="autoComplete_list_1" aria-haspopup="true" aria-expanded="false">
-                            <input id="truckList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
+                            <input id="autoComplete" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
                         </div>
                     </div>
                 </div> 
@@ -136,9 +136,7 @@
                 // create a manager of local database
                 let localRepository = new LocalRepository();
                 
-                const truckListJS = new autoComplete({
-                    name: "truckList", 
-                    selector: "#truckList", 
+                const autoCompleteJS = new autoComplete({
                     placeHolder: "Buscar tractocamión...",
                     wrapper: false,
                     data: {
@@ -163,7 +161,7 @@
                         input: {
                             selection: (event) => {
                                 const selection = event.detail.selection.value;
-                                truckListJS.input.value = selection;
+                                autoCompleteJS.input.value = selection;
                                 onInput();
                             }
                         }
