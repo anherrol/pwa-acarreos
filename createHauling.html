@@ -9,10 +9,12 @@
         <link rel="stylesheet" href="css/styles.css" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
+        <link rel="stylesheet" href="css/autoComplete.min.css">
 
         <script src="js/jquery-3.7.0.min.js"></script>
         <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/autoComplete.min.js"></script>
         <script src="js/dexie.min.js"></script>
 
         <!-- Librerías propias -->
@@ -33,19 +35,25 @@
         <div class="container">
             <form id="create-hauling">
                 <div class="form-group">
-                    <label for="truckList" class="form-label">Tractocamiones</label>
-                    <input class="form-control" list="trukListOptions" id="truckList" placeholder="Buscar tractocamión...">
-                    <datalist id="trukListOptions">
-                    </datalist>
-                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('truckList'));" value="Limpiar tractocamión">
+                    <div class="row">
+                        <label for="truckList" class="form-label">Tractocamiones</label>
+                    </div>
+                    <div class="row">
+                        <div class="autoComplete_wrapper" role="combobox" aria-owns="autoComplete_list_1" aria-haspopup="true" aria-expanded="false">
+                            <input id="truckList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
+                        </div>
+                    </div>
                 </div> 
                 <br /> 
                 <div class="form-group">
-                    <label for="gondolaList" class="form-label">Primera góndola</label>
-                    <input class="form-control" list="gondolaListOptions" id="gondolaList" placeholder="Buscar primera góndola...">
-                    <datalist id="gondolaListOptions">
-                    </datalist>
-                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('gondolaList'));" value="Limpiar primera góndola">
+                    <div class="row">
+                        <label for="gondolaList" class="form-label">Primera góndola</label>
+                    </div>
+                    <div class="row">
+                        <div class="autoComplete_wrapper" role="combobox" aria-owns="autoComplete_list_1" aria-haspopup="true" aria-expanded="false">
+                            <input id="gondolaList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
+                        </div>
+                    </div>
                 </div> 
                 <br /> 
                 <div class="form-group">
@@ -54,11 +62,14 @@
                 </div> 
                 <br />
                 <div class="form-group">
-                    <label for="secondGondolaList" class="form-label">Segunda góndola</label>
-                    <input class="form-control" list="secondGondolaListOptions" id="secondGondolaList" placeholder="Buscar segunda góndola...">
-                    <datalist id="secondGondolaListOptions">
-                    </datalist>
-                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('secondGondolaList'));" value="Limpiar segunda góndola">
+                    <div class="row">
+                        <label for="secondGondolaList" class="form-label">Segunda góndola</label>
+                    </div>
+                    <div class="row">
+                        <div class="autoComplete_wrapper" role="combobox" aria-owns="autoComplete_list_1" aria-haspopup="true" aria-expanded="false">
+                            <input id="secondGondolaList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
+                        </div>
+                    </div>
                 </div> 
                 <br />
                 <div class="form-group">
@@ -79,39 +90,110 @@
             // create a manager of local database
             let localRepository = new LocalRepository();
 
-            // recover trucklist and fill datalist
-            localRepository
-                .catalogs
-                .getTrucks()
-                .then(trucks => {
-                    let dtlTrucks = document.getElementById('trukListOptions')
+            const truckListJS = new autoComplete({
+                name: "truckList", 
+                selector: "#truckList", 
+                placeHolder: "Buscar tractocamión...",
+                wrapper: false,
+                data: {
+                    src: async (query) => {
+                        try {
+                            // recover trucklist and fill datalist
+                            const source = await localRepository.catalogs.getTrucks();
 
-                    trucks.forEach(element => {
-                        dtlTrucks.appendChild(new Option(element.qrcode, element.description));
-                    });
-                });
+                            var data = [];
 
-            localRepository
-                .catalogs
-                .getGondolas()
-                .then(firstGondolas => {
-                    let dtlGondolas = document.getElementById('gondolaListOptions')
+                            source.forEach(element => data.push(element.qrcode));
 
-                    firstGondolas.forEach(element => {
-                        dtlGondolas.appendChild(new Option(element.qrcode, element.description));
-                    });
-                });
+                            return data;
+                        } catch (error) {
+                            return error;
+                        }
+                    },
+                    cache: true,
+                },
+                resultItem: {
+                    highlight: true
+                },
+                events: {
+                    input: {
+                        selection: (event) => {
+                            const selection = event.detail.selection.value;
+                            truckListJS.input.value = selection;
+                        }
+                    }
+                }
+            });
 
-            localRepository
-                .catalogs
-                .getGondolas()
-                .then(secondGondolas => {
-                    let dtlSecondGondolas = document.getElementById('secondGondolaListOptions')
+            const firstGondolaJS = new autoComplete({
+                name: "gondolaList", 
+                selector: "#gondolaList", 
+                placeHolder: "Buscar primera góndola...",
+                wrapper: false,
+                data: {
+                    src: async (query) => {
+                        try {
+                            // recover trucklist and fill datalist
+                            const source = await localRepository.catalogs.getGondolas();
 
-                    secondGondolas.forEach(element => {
-                        dtlSecondGondolas.appendChild(new Option(element.qrcode, element.description));
-                    });
-                });
+                            var data = [];
+
+                            source.forEach(element => data.push(element.qrcode));
+
+                            return data;
+                        } catch (error) {
+                            return error;
+                        }
+                    },
+                    cache: true,
+                },
+                resultItem: {
+                    highlight: true
+                },
+                events: {
+                    input: {
+                        selection: (event) => {
+                            const selection = event.detail.selection.value;
+                            firstGondolaJS.input.value = selection;
+                        }
+                    }
+                }
+            });
+
+            const secondGondolaJS = new autoComplete({
+                name: "secondGondolaList", 
+                selector: "#secondGondolaList", 
+                placeHolder: "Buscar segunda góndola...",
+                wrapper: false,
+                data: {
+                    src: async (query) => {
+                        try {
+                            // recover trucklist and fill datalist
+                            const source = await localRepository.catalogs.getGondolas();
+
+                            var data = [];
+
+                            source.forEach(element => data.push(element.qrcode));
+
+                            return data;
+                        } catch (error) {
+                            return error;
+                        }
+                    },
+                    cache: true,
+                },
+                resultItem: {
+                    highlight: true
+                },
+                events: {
+                    input: {
+                        selection: (event) => {
+                            const selection = event.detail.selection.value;
+                            secondGondolaJS.input.value = selection;
+                        }
+                    }
+                }
+            });
 
             <!-- Validación de controles -->
             function validateNewHaulingInputs() {

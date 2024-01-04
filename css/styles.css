@@ -75,14 +75,11 @@ body {
     font-style: italic;
 }
 
-#trukListOptions {
-    display: none;
+.auto-complete-control {
+    width: 100% !important;
 }
 
-#gondolaListOptions {
-    display: none;
-}
-
-#secondGondolaListOptions {
-    display: none;
+input::placeholder {
+    color: rgba(123, 123, 123, 0.5);
+    transition: all 0.3s ease;
 }

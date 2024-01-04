@@ -34,16 +34,14 @@
         <div class="clearfix"></div>
         <div class="container">
             <form id="frm-creation-of-events">
-                <div class="autoComplete_wrapper">
-                    <input id="autoComplete" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off">
-                </div>
                 <div class="form-group">
-                    <label for="machinesList" class="form-label">Maquina a reportar</label>
-                    <input list="machinesListOptions" class="form-control" id="machinesList" placeholder="Buscar maquinaria...">
-                    <datalist id="machinesListOptions">
-                    </datalist>
-                    <input type="button" class="btn btn-secondary form-control" onclick="limpiarLista(document.getElementById('machinesList'));" value="Limpiar maquinaria">
-                </div> 
+                    <div class="row">
+                        <label for="machinesList" class="form-label">Maquina a reportar</label>
+                    </div>
+                    <div class="row">
+                        <input id="autoComplete" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
+                    </div>
+                </div>
                 <br /> 
                 <div class="form-group">
                     <label for="hourmeter" class="form-label">Horómetro:</label>
@@ -70,10 +68,28 @@
             </form>
         </div>
         <script>
+            // create a manager of local database
+            let localRepository = new LocalRepository();
+
             const autoCompleteJS = new autoComplete({
-                placeHolder: "Search for Food...",
+                placeHolder: "Buscar maquinaria...",
                 data: {
-                    src: ["Sauce - Thousand Island", "Wild Boar - Tenderloin", "Goat - Whole Cut"],
+                    src: async (query) => {
+                        try {
+                            // recover trucklist and fill datalist
+                            const source = await localRepository.catalogs.getMachines();
+
+                            var data = [];
+
+                            source.forEach(element => {
+                                data.push(element.qrcode);
+                            });
+
+                            return data;
+                        } catch (error) {
+                            return error;
+                        }
+                    },
                     cache: true,
                 },
                 resultItem: {
@@ -88,23 +104,7 @@
                     }
                 }
             });
-        </script>
-        <script>
-            // create a manager of local database
-            let localRepository = new LocalRepository();
-
-            // recover trucklist and fill datalist
-            localRepository
-                .catalogs
-                .getMachines()
-                .then(machinery => {
-                    let dtlMachinery = document.getElementById('machinesListOptions')
-
-                    machinery.forEach(element => {
-                        dtlMachinery.appendChild(new Option(element.qrcode, element.description));
-                    });
-                });
-
+            
             localRepository
                 .catalogs
                 .getEventTypes()

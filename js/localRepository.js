@@ -141,8 +141,8 @@ if (typeof LocalRepository === "undefined") {
                     });
             };
 
-            this.getTrucks = () => {
-                return db.haulings.orderBy('truckId').keys();
+            this.getTrucks = async () => {
+                return await db.haulings.orderBy('truckId').keys();
             }
         }
 
@@ -168,8 +168,8 @@ if (typeof LocalRepository === "undefined") {
                     });
             }
 
-            this.getTrucks = function () {
-                return db.trucks.toArray();
+            this.getTrucks = async function () {
+                return await db.trucks.toArray();
             }
 
             // Drivers
@@ -192,8 +192,8 @@ if (typeof LocalRepository === "undefined") {
                     });
             }
 
-            this.getGondolas = function () {
-                return db.gondolas.toArray();
+            this.getGondolas = async function () {
+                return await db.gondolas.toArray();
             }
 
             // operators
@@ -216,8 +216,8 @@ if (typeof LocalRepository === "undefined") {
                     });
             }
 
-            this.getMachines = function() {
-                return db.machines.toArray();
+            this.getMachines = async function() {
+                return await db.machines.toArray();
             }
 
             // Machine operators

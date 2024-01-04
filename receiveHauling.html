@@ -9,10 +9,12 @@
         <link rel="stylesheet" href="css/styles.css" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-utilities.min.css" />
+        <link rel="stylesheet" href="css/autoComplete.min.css">
 
         <script src="js/jquery-3.7.0.min.js"></script>
         <script src="js/jquery.rest.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/autoComplete.min.js"></script>
         <script src="js/dexie.min.js"></script>
 
         <!-- Librerías propias -->
@@ -33,11 +35,15 @@
         <div class="container">
             <form id="update-hauling">
                 <div class="form-group">
-                    <input type="hidden" id="hdnHaulingId" value=""></hidden>
-                    <label for="truckList" class="form-label">Tractocamiones</label>
-                    <input class="form-control" list="trukListOptions" id="truckList" placeholder="Buscar tractocamión..." oninput="onInput()">
-                    <datalist id="trukListOptions">
-                    </datalist>
+                    <div class="row">
+                        <input type="hidden" id="hdnHaulingId" value=""></hidden>
+                        <label for="truckList" class="form-label">Tractocamiones</label>
+                    </div>
+                    <div class="row">
+                        <div class="autoComplete_wrapper" role="combobox" aria-owns="autoComplete_list_1" aria-haspopup="true" aria-expanded="false">
+                            <input id="truckList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
+                        </div>
+                    </div>
                 </div> 
                 <br /> 
                 <div class="form-group">
@@ -129,18 +135,41 @@
             <script>
                 // create a manager of local database
                 let localRepository = new LocalRepository();
+                
+                const truckListJS = new autoComplete({
+                    name: "truckList", 
+                    selector: "#truckList", 
+                    placeHolder: "Buscar tractocamión...",
+                    wrapper: false,
+                    data: {
+                        src: async (query) => {
+                            try {
+                                var data = [];
+
+                                // recover trucklist and fill datalist
+                                data = await localRepository.haulings.getTrucks();
+
+                                return data;
+                            } catch (error) {
+                                return error;
+                            }
+                        },
+                        cache: true,
+                    },
+                    resultItem: {
+                        highlight: true
+                    },
+                    events: {
+                        input: {
+                            selection: (event) => {
+                                const selection = event.detail.selection.value;
+                                truckListJS.input.value = selection;
+                                onInput();
+                            }
+                        }
+                    }
+                });
     
-                // recover trucklist and fill datalist
-                localRepository
-                    .haulings
-                    .getTrucks()
-                    .then(trucks => {
-                        let dtlTrucks = document.getElementById('trukListOptions')
-    
-                        trucks.forEach(element => {
-                            dtlTrucks.appendChild(new Option(element, element));
-                        });
-                    });
                 <!-- Validación de controles -->
                 function validateUpdateHaulingInputs() {
                     var result = true;
@@ -206,55 +235,47 @@
                 
                 function onInput() {
                     var val = document.getElementById("truckList").value;
-                    var opts = document.getElementById('trukListOptions').childNodes;
+                    var localRepository = new LocalRepository();
 
-                    for (var i = 0; i < opts.length; i++) {
-                        if (opts[i].value === val) {
-                            var localRepository = new LocalRepository();
+                    // create a manager of local database
+                    let haulingData; 
+                    
+                    localRepository.haulings
+                        .getHaulingByTruck(val)
+                        .then(data => {
+                            var found = false;
 
-                            // create a manager of local database
-                            let haulingData; 
-                            
-                            localRepository.haulings
-                                .getHaulingByTruck(val)
-                                .then(data => {
-                                    var found = false;
+                            data.every(element => {
+                                if (element.status === 'en ruta') {
+                                    $("#gondolaList").val(element.gondolaOneId);
+                                    $("#secondGondolaList").val(element.gondolaTwoId);
+                                    $("#firstGondolaVolume").val(element.weightOne);
+                                    $("#secondGondolaVolume").val(element.weightTwo);
+                                    $("#bankName").val(element.bankName);
+                                    $("#hdnHaulingId").val(element.id);
 
-                                    data.every(element => {
-                                        if (element.status === 'en ruta') {
-                                            $("#gondolaList").val(element.gondolaOneId);
-                                            $("#secondGondolaList").val(element.gondolaTwoId);
-                                            $("#firstGondolaVolume").val(element.weightOne);
-                                            $("#secondGondolaVolume").val(element.weightTwo);
-                                            $("#bankName").val(element.bankName);
-                                            $("#hdnHaulingId").val(element.id);
+                                    if (data.gondolaTwoId === '') {
+                                        $("#2h1").prop( "disabled", true );
+                                        $("#2h2").prop( "disabled", true );
+                                        $("#2h3").prop( "disabled", true );
+                                        $("#2h4").prop( "disabled", true );
 
-                                            if (data.gondolaTwoId === '') {
-                                                $("#2h1").prop( "disabled", true );
-                                                $("#2h2").prop( "disabled", true );
-                                                $("#2h3").prop( "disabled", true );
-                                                $("#2h4").prop( "disabled", true );
-
-                                                $("#1h1").focus();
-                                            }
-
-                                            found = true;
-
-                                            return false;
-                                        }
-
-                                        return true;
-                                    });
-
-                                    if (!found) {
-                                        $("#truckList").val('');
-                                        $("#possibleError").text("No se ha encontrado un acarreo para este tractocamión.");
+                                        $("#1h1").focus();
                                     }
-                                });
 
-                            break;
-                        }
-                    }
+                                    found = true;
+
+                                    return false;
+                                }
+
+                                return true;
+                            });
+
+                            if (!found) {
+                                $("#truckList").val('');
+                                $("#possibleError").text("No se ha encontrado un acarreo para este tractocamión.");
+                            }
+                        });
                 }
 
                 function guardarAcarreo() {
