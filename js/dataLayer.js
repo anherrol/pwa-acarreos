@@ -1,4 +1,5 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
+    // var BASE_API_URL = 'http://acarreosapi.local/api/';
     // var BASE_API_URL = 'https://localhost:7065/api/'; 
     var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
 }
@@ -143,12 +144,13 @@ function HaulingsProxy() {
         );
     }
 
-    this.storeHauling = function(userId, haulingId, tractorTruckId, driver, gondolaId1, cantidadM31, gondolaId2, cantidadM32, successCallBack) {
+    this.storeHauling = function(ticketId, userId, haulingId, tractorTruckId, driver, gondolaId1, cantidadM31, gondolaId2, cantidadM32, successCallBack) {
         let operationDate = new Date();
 
         this.ajaxService.callPostService( 
             this.service,
             {
+                "ticketId": ticketId, 
                 "userId": userId,
                 "operationDate": operationDate,
                 "haulingId": haulingId,
@@ -285,6 +287,7 @@ function SyncData() {
             var newHaulings = await this.localRepository.haulings.getLocalNewHaulings(); 
             newHaulings.every((newHauling) => { 
                 haulingsProxy.storeHauling(
+                    newHauling.ticketId, 
                     userId, 
                     newHauling.id, 
                     newHauling.truckId, 
@@ -322,7 +325,8 @@ function SyncData() {
                                             hauling.gondolaId1, hauling.cantidadM31, 0, 0, 0, 0, 
                                             hauling.gondolaId2, hauling.cantidadM32, 0, 0, 0, 0, 
                                             hauling.nombreMina, 
-                                            'en ruta');        
+                                            'en ruta',
+                                            hauling.folioBoleta);        
                                     }
                                 })
 

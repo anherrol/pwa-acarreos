@@ -35,12 +35,17 @@
         <div class="container">
             <form id="create-hauling">
                 <div class="form-group">
+                    <label for="folioBoleta" class="form-label">Folio en Boleta</label>
+                    <input class="form-control" type="number" id="folioBoleta" name="folioBoleta" autocorrect="off" autocomplete="off" placeholder="Folio de la boleta" />
+                </div> 
+                <br /> 
+                <div class="form-group">
                     <div class="row">
-                        <label for="autoComplete" class="form-label">Tractocamiones</label>
+                        <label for="truckList" class="form-label">Tractocamiones</label>
                     </div>
                     <div class="row">
                         <div class="autoComplete_wrapper" role="combobox" aria-owns="autoComplete_list_1" aria-haspopup="true" aria-expanded="false">
-                            <input id="autoComplete" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
+                            <input id="truckList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
                         </div>
                     </div>
                 </div> 
@@ -90,7 +95,9 @@
             // create a manager of local database
             let localRepository = new LocalRepository();
 
-            const autoCompleteJS = new autoComplete({
+            const truckListJS = new autoComplete({
+                name: "truckList", 
+                selector: "#truckList", 
                 placeHolder: "Buscar tractocamión...",
                 wrapper: false,
                 data: {
@@ -117,7 +124,7 @@
                     input: {
                         selection: (event) => {
                             const selection = event.detail.selection.value;
-                            autoCompleteJS.input.value = selection;
+                            truckListJS.input.value = selection;
                         }
                     }
                 }
@@ -199,6 +206,12 @@
                 var message = '';
                 var focusControl = '';
 
+                if ($('#folioBoleta').val() === '') {
+                    result = false;
+                    focusControl = 'folioBoleta';
+                    message = 'Debe seleccionar un número de boleta  válido.';
+                }
+
                 if ($('#truckList').val() === '') {
                     result = false;
                     focusControl = 'truckList';
@@ -233,6 +246,7 @@
                     var localRepository = new LocalRepository();
 
                     localRepository.haulings.storeNewHauling(
+                        $('#folioBoleta').val(), 
                         $('#truckList').val(), 
                         $('#gondolaList').val(), 
                         $('#primerTonelaje').val(), 

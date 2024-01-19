@@ -85,9 +85,18 @@ if (typeof LocalRepository === "undefined") {
                 return await db.haulings.where({status: 'recibido'}).toArray();
             }
 
-            this.storeNewHauling = (truckId, gondolaOneId, weightOne, gondolaTwoId, weightTwo) => {
+            this.storeNewHauling = (ticketId, truckId, gondolaOneId, weightOne, gondolaTwoId, weightTwo) => {
                 db.haulings
-                    .add({id: uuidv4(), truckId: truckId, gondolaOneId: gondolaOneId, weightOne: weightOne, gondolaTwoId: gondolaTwoId, weightTwo: weightTwo, status: 'creado'})
+                    .add({
+                        id: uuidv4(), 
+                        ticketId: ticketId, 
+                        truckId: truckId, 
+                        gondolaOneId: gondolaOneId, 
+                        weightOne: weightOne, 
+                        gondolaTwoId: gondolaTwoId, 
+                        weightTwo: weightTwo, 
+                        status: 'creado'
+                    })
                     .catch((error) => {
                         console.error("Failed to add new hauling. Error: " + error);
                         return Promise.reject(error);
@@ -123,7 +132,7 @@ if (typeof LocalRepository === "undefined") {
                     });
             };
 
-            this.storeHauling = (id, truckId, operatorId, dispatchDate, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, bankName, status) => {
+            this.storeHauling = (id, truckId, operatorId, dispatchDate, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, bankName, status, foliotBoleta) => {
                 db.haulings
                     .put({
                         id: id, 
@@ -133,7 +142,8 @@ if (typeof LocalRepository === "undefined") {
                         gondolaOneId: gondolaOneId, weightOne: weightOne, hOne1: hOne1, hOne2: hOne2, hOne3: hOne3, hOne4: hOne4, 
                         gondolaTwoId: gondolaTwoId, weightTwo: weightTwo, hTwo1: hTwo1, hTwo2: hTwo2, hTwo3: hTwo3, hTwo4: hTwo4, 
                         bankName: bankName,
-                        status: status
+                        status: status, 
+                        foliotBoleta: foliotBoleta
                     })
                     .catch((error) => {
                         console.error("Failed to store hauling. Error: " + error);
