@@ -9,8 +9,13 @@ if (typeof LocalRepository === "undefined") {
                 .replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
         }
 
+        const EntryTypes = {
+            Error: 0, 
+            Normal: 1
+        }
+
         // Define a schema
-        db.version(1.1)
+        db.version(1.2)
             .stores({
                 trucks: 'id, qrcode, description', 
                 drivers: 'id, qrcode, description', 
@@ -23,7 +28,8 @@ if (typeof LocalRepository === "undefined") {
                 dieselDispatchings: 'id, machineId, quantity, operatorId', 
                 creationOfEvents: 'id, machineId, hourmeter, eventType, observations, operatorId', 
                 haulings: 'id, truckId, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status', 
-                jobplaces: 'id, nombre, prefijoBoletas, lugarOrigen, numeroFrente, numeroLote, esMina'
+                jobplaces: 'id, nombre, prefijoBoletas, lugarOrigen, numeroFrente, numeroLote, esMina', 
+                logentries: '++logId, logEntry, logDate, entryType'
             });
 
         // Open the database
@@ -85,22 +91,22 @@ if (typeof LocalRepository === "undefined") {
                 return await db.haulings.where({status: 'recibido'}).toArray();
             }
 
-            this.storeNewHauling = (ticketId, truckId, gondolaOneId, weightOne, gondolaTwoId, weightTwo) => {
-                db.haulings
-                    .add({
-                        id: uuidv4(), 
-                        ticketId: ticketId, 
-                        truckId: truckId, 
-                        gondolaOneId: gondolaOneId, 
-                        weightOne: weightOne, 
-                        gondolaTwoId: gondolaTwoId, 
-                        weightTwo: weightTwo, 
-                        status: 'creado'
-                    })
-                    .catch((error) => {
-                        console.error("Failed to add new hauling. Error: " + error);
-                        return Promise.reject(error);
-                    }); 
+            this.storeNewHauling = async (ticketId, truckId, gondolaOneId, weightOne, gondolaTwoId, weightTwo) => {
+                try {
+                    await db.haulings
+                        .add({
+                            id: uuidv4(), 
+                            ticketId: ticketId, 
+                            truckId: truckId, 
+                            gondolaOneId: gondolaOneId, 
+                            weightOne: weightOne, 
+                            gondolaTwoId: gondolaTwoId, 
+                            weightTwo: weightTwo, 
+                            status: 'creado'
+                        });
+                } catch (error) {
+                    this.logEntries.storeLogError('Failed to add new hauling. Error: ' + error);
+                }
             };
 
             this.updateHaulingReception = (id, hOne1, hOne2, hOne3, hOne4, hTwo1, hTwo2, hTwo3, hTwo4) => {
@@ -153,6 +159,10 @@ if (typeof LocalRepository === "undefined") {
 
             this.getTrucks = async () => {
                 return await db.haulings.orderBy('truckId').keys();
+            }
+
+            this.getDailyCreatedHaulings = async () => {
+                return await db.haulings.where({status: 'creado'}).toArray();
             }
         }
 
@@ -255,10 +265,37 @@ if (typeof LocalRepository === "undefined") {
             }
         }
 
+        this.LogEntries = function () {
+            this.storeLogError = async function (logError) {
+                await db
+                    .logentries
+                    .put({ logEntry: logError, logDate: new Date(), entryType: EntryTypes.Error });
+            }
+
+            this.storeLogEntry = async function (logEntry) {
+                await db
+                    .logentries
+                    .put({ logEntry: logEntry, logDate: new Date(), entryType: EntryTypes.Normal });
+            }
+
+            this.deleteLogEntry = async function (id) {
+                await db
+                    .logEntries
+                    .where('logId')
+                    .equals(id)
+                    .delete();
+            }
+
+            this.getLocalLogEntries = async () => {
+                return await db.logentries.toArray();
+            }
+        }
+
         this.parameters = new this.Parameters();
         this.dieselDispatching = new this.DieselDispatching();
         this.creationOfEvents = new this.CreationOfEvents();
         this.catalogs = new this.Catalogs();
         this.haulings = new this.Haulings();
+        this.logEntries = new this.LogEntries();
     }
 }

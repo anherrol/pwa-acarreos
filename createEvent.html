@@ -150,29 +150,35 @@
             }
             
             function guardarEvento() {
-                if (validateEventCreationInputs()) {
-                    console.log('Guardado de creación de eventos.');
-                    var localRepository = new LocalRepository();
-                    var parameters = new Parameters();
-                    var operatorId = 0;
+                try {
+                    if (validateEventCreationInputs()) {
+                        console.log('Guardado de creación de eventos.');
+                        var localRepository = new LocalRepository();
+                        var parameters = new Parameters();
+                        var operatorId = 0;
 
-                    parameters
-                        .get("userData")
-                        .then(model => { 
-                            if (model) {
-                                operatorId = model.data.userId;
-                            }
+                        parameters
+                            .get("userData")
+                            .then(model => { 
+                                if (model) {
+                                    operatorId = model.data.userId;
+                                }
 
-                            // machineId, hourmeter, eventType, observations, operatorId
-                            localRepository.creationOfEvents.storeCreationOfEvent(
-                                $('#machinesList').val(), 
-                                $('#hourMeter').val(), 
-                                $('#eventTypeList').val(), 
-                                $('#observations').val(), 
-                                operatorId);
+                                // machineId, hourmeter, eventType, observations, operatorId
+                                localRepository.creationOfEvents.storeCreationOfEvent(
+                                    $('#machinesList').val(), 
+                                    $('#hourMeter').val(), 
+                                    $('#eventTypeList').val(), 
+                                    $('#observations').val(), 
+                                    operatorId);
 
-                            $("#frm-creation-of-events").get(0).reset();
-                        });
+                                $("#frm-creation-of-events").get(0).reset();
+
+                                localRepository.localRepository.storeLogEntry('Evento guardado satisfactoriamente.');
+                            });
+                    }
+                } catch (error) {
+                    localRepository.logEntries.storeLogError('Error guardarEvento: ' + error);
                 }
             }
         </script>

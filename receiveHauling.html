@@ -132,181 +132,181 @@
                     <label id="successMessage" class="form-label success-label"></label>
                 </div>
             </form>
-            <script>
-                // create a manager of local database
-                let localRepository = new LocalRepository();
-                
-                const truckListJS = new autoComplete({
-                    name: "truckList", 
-                    selector: "#truckList", 
-                    placeHolder: "Buscar tractocamión...",
-                    wrapper: false,
-                    data: {
-                        src: async (query) => {
-                            try {
-                                var data = [];
+        </div>
+        <script>
+            // create a manager of local database
+            let localRepository = new LocalRepository();
+            
+            const truckListJS = new autoComplete({
+                name: "truckList", 
+                selector: "#truckList", 
+                placeHolder: "Buscar tractocamión...",
+                wrapper: false,
+                data: {
+                    src: async (query) => {
+                        try {
+                            var data = [];
 
-                                // recover trucklist and fill datalist
-                                data = await localRepository.haulings.getTrucks();
+                            // recover trucklist and fill datalist
+                            data = await localRepository.haulings.getTrucks();
 
-                                return data;
-                            } catch (error) {
-                                return error;
-                            }
-                        },
-                        cache: true,
+                            return data;
+                        } catch (error) {
+                            return error;
+                        }
                     },
-                    resultItem: {
-                        highlight: true
-                    },
-                    events: {
-                        input: {
-                            selection: (event) => {
-                                const selection = event.detail.selection.value;
-                                truckListJS.input.value = selection;
-                                onInput();
-                            }
+                    cache: true,
+                },
+                resultItem: {
+                    highlight: true
+                },
+                events: {
+                    input: {
+                        selection: (event) => {
+                            const selection = event.detail.selection.value;
+                            truckListJS.input.value = selection;
+                            onInput();
                         }
                     }
-                });
-    
-                <!-- Validación de controles -->
-                function validateUpdateHaulingInputs() {
-                    var result = true;
-                    var message = '';
-                    var focusControl = '';
-
-                    if (result && $('#1h1').val() === '') {
-                        result = false;
-                        focusControl = '1h1';
-                        message = 'Debe seleccionar un primer nivel de la primera góndola válido.';
-                    }
-
-                    if (result && $('#1h2').val() === '') {
-                        result = false;
-                        focusControl = '1h2';
-                        message = 'Debe seleccionar un segundo nivel de la primera góndola válido.';
-                    }
-
-                    if (result && $('#1h3').val() === '') {
-                        result = false;
-                        focusControl = '1h3';
-                        message = 'Debe seleccionar un tercer nivel de la primera góndola válido.';
-                    }
-
-                    if (result && $('#1h4').val() === '') {
-                        result = false;
-                        focusControl = '1h4';
-                        message = 'Debe seleccionar un cuarto nivel de la primera góndola válido.';
-                    }
-
-                    if (result && $('#secondGondolaList').val() !== '' && $('#2h1').val() === '') {
-                        result = false;
-                        focusControl = '2h1';
-                        message = 'Debe seleccionar un primer nivel de la segunda góndola válido.';
-                    }
-
-                    if (result && $('#secondGondolaList').val() !== '' && $('#2h2').val() === '') {
-                        result = false;
-                        focusControl = '2h2';
-                        message = 'Debe seleccionar un segundo nivel de la segunda góndola válido.';
-                    }
-
-                    if (result && $('#secondGondolaList').val() !== '' && $('#2h3').val() === '') {
-                        result = false;
-                        focusControl = '2h3';
-                        message = 'Debe seleccionar un tercer nivel de la segunda góndola válido.';
-                    }
-
-                    if (result && $('#secondGondolaList').val() !== '' && $('#2h4').val() === '') {
-                        result = false;
-                        focusControl = '2h4';
-                        message = 'Debe seleccionar un cuarto nivel de la segunda góndola válido.';
-                    }
-
-                    $('#possibleError').text(message);
-                    
-                    if (message !== '') {
-                        $('#' + focusControl).focus();
-                    }
-
-                    return result;
                 }
+            });
+
+            <!-- Validación de controles -->
+            function validateUpdateHaulingInputs() {
+                var result = true;
+                var message = '';
+                var focusControl = '';
+
+                if (result && $('#1h1').val() === '') {
+                    result = false;
+                    focusControl = '1h1';
+                    message = 'Debe seleccionar un primer nivel de la primera góndola válido.';
+                }
+
+                if (result && $('#1h2').val() === '') {
+                    result = false;
+                    focusControl = '1h2';
+                    message = 'Debe seleccionar un segundo nivel de la primera góndola válido.';
+                }
+
+                if (result && $('#1h3').val() === '') {
+                    result = false;
+                    focusControl = '1h3';
+                    message = 'Debe seleccionar un tercer nivel de la primera góndola válido.';
+                }
+
+                if (result && $('#1h4').val() === '') {
+                    result = false;
+                    focusControl = '1h4';
+                    message = 'Debe seleccionar un cuarto nivel de la primera góndola válido.';
+                }
+
+                if (result && $('#secondGondolaList').val() !== '' && $('#2h1').val() === '') {
+                    result = false;
+                    focusControl = '2h1';
+                    message = 'Debe seleccionar un primer nivel de la segunda góndola válido.';
+                }
+
+                if (result && $('#secondGondolaList').val() !== '' && $('#2h2').val() === '') {
+                    result = false;
+                    focusControl = '2h2';
+                    message = 'Debe seleccionar un segundo nivel de la segunda góndola válido.';
+                }
+
+                if (result && $('#secondGondolaList').val() !== '' && $('#2h3').val() === '') {
+                    result = false;
+                    focusControl = '2h3';
+                    message = 'Debe seleccionar un tercer nivel de la segunda góndola válido.';
+                }
+
+                if (result && $('#secondGondolaList').val() !== '' && $('#2h4').val() === '') {
+                    result = false;
+                    focusControl = '2h4';
+                    message = 'Debe seleccionar un cuarto nivel de la segunda góndola válido.';
+                }
+
+                $('#possibleError').text(message);
                 
-                function onInput() {
-                    var val = document.getElementById("truckList").value;
+                if (message !== '') {
+                    $('#' + focusControl).focus();
+                }
+
+                return result;
+            }
+            
+            function onInput() {
+                var val = document.getElementById("truckList").value;
+                var localRepository = new LocalRepository();
+
+                // create a manager of local database
+                let haulingData; 
+                
+                localRepository.haulings
+                    .getHaulingByTruck(val)
+                    .then(data => {
+                        var found = false;
+
+                        data.every(element => {
+                            if (element.status === 'en ruta') {
+                                $("#gondolaList").val(element.gondolaOneId);
+                                $("#secondGondolaList").val(element.gondolaTwoId);
+                                $("#firstGondolaVolume").val(element.weightOne);
+                                $("#secondGondolaVolume").val(element.weightTwo);
+                                $("#bankName").val(element.bankName);
+                                $("#hdnHaulingId").val(element.id);
+
+                                if (data.gondolaTwoId === '') {
+                                    $("#2h1").prop( "disabled", true );
+                                    $("#2h2").prop( "disabled", true );
+                                    $("#2h3").prop( "disabled", true );
+                                    $("#2h4").prop( "disabled", true );
+
+                                    $("#1h1").focus();
+                                }
+
+                                found = true;
+
+                                return false;
+                            }
+
+                            return true;
+                        });
+
+                        if (!found) {
+                            $("#truckList").val('');
+                            $("#possibleError").text("No se ha encontrado un acarreo para este tractocamión.");
+                        }
+                    });
+            }
+
+            function guardarAcarreo() {
+                if (validateUpdateHaulingInputs()) {
+                    console.log('Guardar acarreo');
+                
                     var localRepository = new LocalRepository();
 
-                    // create a manager of local database
-                    let haulingData; 
-                    
                     localRepository.haulings
-                        .getHaulingByTruck(val)
-                        .then(data => {
-                            var found = false;
-
-                            data.every(element => {
-                                if (element.status === 'en ruta') {
-                                    $("#gondolaList").val(element.gondolaOneId);
-                                    $("#secondGondolaList").val(element.gondolaTwoId);
-                                    $("#firstGondolaVolume").val(element.weightOne);
-                                    $("#secondGondolaVolume").val(element.weightTwo);
-                                    $("#bankName").val(element.bankName);
-                                    $("#hdnHaulingId").val(element.id);
-
-                                    if (data.gondolaTwoId === '') {
-                                        $("#2h1").prop( "disabled", true );
-                                        $("#2h2").prop( "disabled", true );
-                                        $("#2h3").prop( "disabled", true );
-                                        $("#2h4").prop( "disabled", true );
-
-                                        $("#1h1").focus();
-                                    }
-
-                                    found = true;
-
-                                    return false;
-                                }
-
-                                return true;
-                            });
-
-                            if (!found) {
-                                $("#truckList").val('');
-                                $("#possibleError").text("No se ha encontrado un acarreo para este tractocamión.");
+                        .updateHaulingReception(
+                            $('#hdnHaulingId').val(), 
+                            $('#1h1').val(), 
+                            $('#1h2').val(), 
+                            $('#1h3').val(), 
+                            $('#1h4').val(), 
+                            $('#2h1').val(), 
+                            $('#2h2').val(), 
+                            $('#2h3').val(), 
+                            $('#2h4').val())
+                        .then((updated) => {
+                            if (updated) {
+                                $("#successMessage").text("Acarreo actualizado satisfactoriamente.");
+                            } else {
+                                $("#possibleError").text("Hubo un error al actualizar el acarreo.");
                             }
-                        });
+                        });  
+
+                    $("#update-hauling").get(0).reset();
                 }
-
-                function guardarAcarreo() {
-                    if (validateUpdateHaulingInputs()) {
-                        console.log('Guardar acarreo');
-                    
-                        var localRepository = new LocalRepository();
-
-                        localRepository.haulings
-                            .updateHaulingReception(
-                                $('#hdnHaulingId').val(), 
-                                $('#1h1').val(), 
-                                $('#1h2').val(), 
-                                $('#1h3').val(), 
-                                $('#1h4').val(), 
-                                $('#2h1').val(), 
-                                $('#2h2').val(), 
-                                $('#2h3').val(), 
-                                $('#2h4').val())
-                            .then((updated) => {
-                                if (updated) {
-                                    $("#successMessage").text("Acarreo actualizado satisfactoriamente.");
-                                } else {
-                                    $("#possibleError").text("Hubo un error al actualizar el acarreo.");
-                                }
-                            });  
-
-                        $("#update-hauling").get(0).reset();
-                    }
-                }
-            </script>
-        </div>
+            }
+        </script>
     </body>
 </html>

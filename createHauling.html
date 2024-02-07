@@ -239,13 +239,11 @@
                 return result;
             }
             
-            function guardarAcarreo() {
+            async function guardarAcarreo() {
                 if (validateNewHaulingInputs()) {
-                    console.log('Guardar de nuevos acarreos.');
-                    
                     var localRepository = new LocalRepository();
 
-                    localRepository.haulings.storeNewHauling(
+                    await localRepository.haulings.storeNewHauling(
                         $('#folioBoleta').val(), 
                         $('#truckList').val(), 
                         $('#gondolaList').val(), 
@@ -254,6 +252,8 @@
                         $('#segundoTonelaje').val());
 
                     $("#create-hauling").get(0).reset();
+
+                    localRepository.logEntries.storeLogEntry('Acarreo guardado satisfactoriamente.');
                 }
             }
         </script>

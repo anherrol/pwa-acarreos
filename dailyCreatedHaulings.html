@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <title>Rastreo de acarreos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="shortcut icon" type="image/png" href="assets/img/icons/favicon-16x16.png" />
+
+        <link rel="stylesheet" type="text/css" href="node_modules/smart-webcomponents/source/styles/smart.default.css" />
+        <link rel="stylesheet" type="text/css" href="css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-utilities.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/autoComplete.min.css">
+
+        <script src="js/jquery-3.7.0.min.js"></script>
+        <script src="js/jquery.rest.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/autoComplete.min.js"></script>
+        <script src="js/dexie.min.js"></script>
+
+        <!-- Librerías propias -->
+        <script src="js/localRepository.js"></script>
+        <script src="js/serviceProxy.js"></script>
+        <script src="js/dataLayer.js"></script>
+        <script src="js/main.js"></script>
+    </head>
+    <body>
+        <header id="main-header">
+            <div class="container">
+                <a href="menu.html"><img src="assets\img\back-arrow.png" alt="back-arrow" class="image-back" /></a>
+                <img src="assets\img\Logo-TrenMaya-Completo.jpg" alt="Tren Maya Logo" class="imageLogo" />
+                <h1 class="logo-title">Rastreo de acarreos</h1>
+            </div>
+        </header>
+        <div class="clearfix"></div>
+        <br />
+        <div class="container">
+            <smart-grid id="grid"></smart-grid>
+        </div>
+        <script type="module" src="node_modules/smart-webcomponents/source/modules/smart.grid.js"></script>
+        <script>
+            // create a manager of local database
+            let localRepository = new LocalRepository();
+
+            GetData = async () => {
+                var result = await localRepository.haulings.getDailyCreatedHaulings();
+
+                return result;
+            }
+
+            GetData().then(result => {
+                window.Smart('#grid', class {
+                    get properties() {
+                        return {
+                            appearance: {
+                                alternationStart: 0,
+                                alternationCount: 2
+                            },
+                            selection: {
+                                enabled: false,
+                                checkBoxes: {
+                                    enabled: false
+                                }
+                            },
+                            filtering: {
+                                enabled: false
+                            },
+                            sorting: {
+                                enabled: true
+                            },
+                            dataSource: new window.Smart.DataAdapter({
+                                dataSource: result,
+                                dataFields: [
+                                    { name: 'ticketId', dataType: 'string' },
+                                    { name: 'truckId', dataType: 'string' },
+                                    { name: 'gondolaOneId',dataType: 'string' },
+                                    { name: 'weightOne',dataType: 'int' },
+                                    { name: 'gondolaTwoId', dataType: 'string' },
+                                    { name: 'weightTwo', dataType: 'int' }
+                                ]
+                            }),
+                            columns: 
+                            [
+                                { label: 'Boleta', dataField: 'ticketId', width: 60 },
+                                { label: 'Truck', dataField: 'truckId', width: 70 },
+                                { label: 'Góndola', dataField: 'gondolaOneId', width: 70 },
+                                { label: 'M3', dataField: 'weightOne', width: 35 },
+                                { label: 'Góndola', dataField: 'gondolaTwoId', width: 70}, 
+                                { label: 'M3', dataField: 'weightTwo', width: 35 }
+                            ]
+                        };
+                    }
+                });
+            })
+        </script>
+    </body>
+</html>

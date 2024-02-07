@@ -1,7 +1,7 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
     // var BASE_API_URL = 'http://acarreosapi.local/api/';
-    // var BASE_API_URL = 'https://localhost:7065/api/'; 
-    var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
+    var BASE_API_URL = 'https://localhost:7065/api/'; 
+    // var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
 }
 
 function AuthProxy() {
@@ -211,9 +211,30 @@ function HaulingsProxy() {
     }
 }
 
+function LogEntriesProxy() {
+    this.service = 'logentries/storeEntry';
+    this.ajaxService = new ServiceProxy(BASE_API_URL);
+
+    this.storeLogEntry = function(logEntry, userId, logDateTime) {
+        this.ajaxService.callPostService( 
+            this.service,
+            {
+                "logEntry": logEntry,
+                "userId": userId,
+                "logDateTime": logDateTime
+            }, 
+            successCallBack, 
+            (jqXhr, textStatus, errorMessage) => {
+                $("#error").html(`Error${errorMessage}`);
+            }
+        );
+    }
+}
+
 function SyncData() {
     this.localRepository = new LocalRepository();
 
+    // sincronización de catálogos
     this.syncCatalogs = function() {
         $("#syncLog").empty();
 
@@ -257,6 +278,7 @@ function SyncData() {
         )
     };
 
+    // sincronización de acarreos
     this.syncHaulings = async function() {
         let parametersRepository = new Parameters();
 
@@ -353,5 +375,34 @@ function SyncData() {
                 return true;
             });
         }
+    }
+
+    // sincronización de logs
+    this.syncLogEntries = async function() {
+        let parametersRepository = new Parameters();
+
+        // obtenemos el id del lugar de trabajo del usuario
+        let userData = await parametersRepository.get("userData");
+        let userId = userData.data.userId;
+        
+        let logEntriesProxy = new LogEntriesProxy();
+
+            // updload only new haulings
+            var logEntries = await this.localRepository.logEntries.getLocalLogEntries(); 
+
+            logEntries.every((logEntry) => { 
+                logEntriesProxy.storeLogEntry(
+                    logEntry.logEntry, 
+                    logEntry.logDate, 
+                    userId, 
+                    (data, status) => {
+                        if (status == 'success') {
+                            // se actualiza el hauling local, para no volver a subirlo
+                            this.localRepository.logEntries.deleteLogEntry(logEntry.logId, 'en ruta');
+                        }
+                    });
+
+                return true;
+            });
     }
 }
