@@ -83,12 +83,12 @@
                 </div> 
                 <br />
                 <div class="form-group">
-                    <input type="button" class="btn btn-primary form-control" onclick="guardarAcarreo();" value="Guardar Acarreo">
-                </div> 
-                <br />
-                <div class="form-group">
                     <label id="possibleError" class="form-label error-label"></label>
                 </div>
+                <br />
+                <div class="form-group">
+                    <input type="button" class="btn btn-primary form-control" onclick="guardarAcarreo();" value="Guardar Acarreo">
+                </div> 
             </form>
         </div>
         <script>
@@ -201,7 +201,7 @@
             });
 
             <!-- Validación de controles -->
-            function validateNewHaulingInputs() {
+            async function validateNewHaulingInputs() {
                 var result = true;
                 var message = '';
                 var focusControl = '';
@@ -209,10 +209,20 @@
                 if ($('#folioBoleta').val() === '') {
                     result = false;
                     focusControl = 'folioBoleta';
-                    message = 'Debe seleccionar un número de boleta  válido.';
+                    message = 'Debe seleccionar un número de boleta válido.';
+                } else {
+                    var ticketId = $('#folioBoleta').val();
+
+                    var isValidTicketId = await localRepository.haulings.validateTicketId(ticketId);
+
+                    if (!isValidTicketId) {
+                        result = false;
+                        focusControl = 'folioBoleta';
+                        message = 'El número de boleta ya existe.';
+                    }
                 }
 
-                if ($('#truckList').val() === '') {
+                if (result && $('#truckList').val() === '') {
                     result = false;
                     focusControl = 'truckList';
                     message = 'Debe seleccionar un tractocamión válido.';
@@ -240,7 +250,7 @@
             }
             
             async function guardarAcarreo() {
-                if (validateNewHaulingInputs()) {
+                if (await validateNewHaulingInputs()) {
                     var localRepository = new LocalRepository();
 
                     await localRepository.haulings.storeNewHauling(

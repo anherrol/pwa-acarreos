@@ -15,8 +15,7 @@ if (typeof LocalRepository === "undefined") {
         }
 
         // Define a schema
-        db.version(1.2)
-            .stores({
+        db.version(1.3).stores({
                 trucks: 'id, qrcode, description', 
                 drivers: 'id, qrcode, description', 
                 gondolas: 'id, qrcode, description', 
@@ -27,7 +26,7 @@ if (typeof LocalRepository === "undefined") {
                 parameters: 'id, value', 
                 dieselDispatchings: 'id, machineId, quantity, operatorId', 
                 creationOfEvents: 'id, machineId, hourmeter, eventType, observations, operatorId', 
-                haulings: 'id, truckId, gondolaOneId, weightOne, hOne1, hOne2, hOne3, hOne4, gondolaTwoId, weightTwo, hTwo1, hTwo2, hTwo3, hTwo4, status', 
+                haulings: 'id, truckId, ticketId, status', 
                 jobplaces: 'id, nombre, prefijoBoletas, lugarOrigen, numeroFrente, numeroLote, esMina', 
                 logentries: '++logId, logEntry, logDate, entryType'
             });
@@ -158,11 +157,19 @@ if (typeof LocalRepository === "undefined") {
             };
 
             this.getTrucks = async () => {
-                return await db.haulings.orderBy('truckId').keys();
+                return await db.haulings.where({ status: 'en ruta' }).toArray();
             }
 
             this.getDailyCreatedHaulings = async () => {
                 return await db.haulings.where({status: 'creado'}).toArray();
+            }
+
+            this.getDailyReceivedHaulings = async () => {
+                return await db.haulings.where("status").equals("recibido").or("status").equals("en ruta").reverse().sortBy("status");
+            }
+
+            this.validateTicketId = async (ticketId) => {
+                return await db.haulings.where({ticketId: ticketId}).toArray().length == 0;
             }
         }
 

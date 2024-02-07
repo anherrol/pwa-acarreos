@@ -35,7 +35,7 @@
         <div class="clearfix"></div>
         <br />
         <div class="container">
-            <h4>Acarreos creados</h4>
+            <h4>Acarreos recibidos</h4>
             <smart-grid id="grid"></smart-grid>
         </div>
         <script type="module" src="node_modules/smart-webcomponents/source/modules/smart.grid.js"></script>
@@ -44,7 +44,7 @@
             let localRepository = new LocalRepository();
 
             GetData = async () => {
-                var result = await localRepository.haulings.getDailyCreatedHaulings();
+                var result = await localRepository.haulings.getDailyReceivedHaulings();
 
                 return result;
             }
@@ -72,22 +72,24 @@
                             dataSource: new window.Smart.DataAdapter({
                                 dataSource: result,
                                 dataFields: [
-                                    { name: 'ticketId', dataType: 'string' },
+                                    { name: 'foliotBoleta', dataType: 'int' },
                                     { name: 'truckId', dataType: 'string' },
                                     { name: 'gondolaOneId',dataType: 'string' },
                                     { name: 'weightOne',dataType: 'int' },
                                     { name: 'gondolaTwoId', dataType: 'string' },
-                                    { name: 'weightTwo', dataType: 'int' }
+                                    { name: 'weightTwo', dataType: 'int' },
+                                    { name: 'status', dataType: 'string' }
                                 ]
                             }),
                             columns: 
                             [
-                                { label: 'Boleta', dataField: 'ticketId', width: 60 },
-                                { label: 'Truck', dataField: 'truckId', width: 70 },
-                                { label: 'Góndola', dataField: 'gondolaOneId', width: 70 },
+                                { label: 'Boleta', dataField: 'foliotBoleta', width: 50 },
+                                { label: 'Truck', dataField: 'truckId', width: 60 },
+                                { label: 'Góndola', dataField: 'gondolaOneId', width: 60 },
                                 { label: 'M3', dataField: 'weightOne', width: 35 },
-                                { label: 'Góndola', dataField: 'gondolaTwoId', width: 70}, 
-                                { label: 'M3', dataField: 'weightTwo', width: 35 }
+                                { label: 'Góndola', dataField: 'gondolaTwoId', width: 60}, 
+                                { label: 'M3', dataField: 'weightTwo', width: 35 },
+                                { label: 'Status', dataField: 'status', width: 60 }
                             ]
                         };
                     }

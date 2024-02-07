@@ -145,12 +145,12 @@
                 data: {
                     src: async (query) => {
                         try {
-                            var data = [];
-
                             // recover trucklist and fill datalist
-                            data = await localRepository.haulings.getTrucks();
+                            var data = await localRepository.haulings.getTrucks();
 
-                            return data;
+                            var truckIds = data.map((truck) => truck.truckId);
+
+                            return truckIds;
                         } catch (error) {
                             return error;
                         }

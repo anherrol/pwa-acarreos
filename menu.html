@@ -40,8 +40,16 @@
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./createHauling.html" role="button">Crear Acarreo</a>
                 </div>
                 <br class="createHaulingDiv" />
+                <div class="form-group createHaulingDiv">
+                    <a class="btn btn-outline-primary btn-lg btn-menu" href="./dailyCreatedHaulings.html" role="button">Acarreos creados</a>
+                </div>
+                <br class="createHaulingDiv" />
                 <div class="form-group receiveHaulingDiv">
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./receiveHauling.html" role="button">Recibir Acarreo</a>
+                </div>
+                <br class="receiveHaulingDiv" />
+                <div class="form-group receiveHaulingDiv">
+                    <a class="btn btn-outline-primary btn-lg btn-menu" href="./dailyReceivedHaulings.html" role="button">Acarreos recibidos</a>
                 </div>
                 <br class="receiveHaulingDiv" />
                 <!--
@@ -58,10 +66,6 @@
                 </div>
                 <br />
                 -->
-                <div class="form-group">
-                    <a class="btn btn-outline-primary btn-lg btn-menu" href="./dailyCreatedHaulings.html" role="button">Acarreos creados</a>
-                </div>
-                <br />
                 <div class="form-group">
                     <a class="btn btn-outline-primary btn-lg btn-menu" href="./syncData.html" role="button">Sincronizar</a>
                 </div>
@@ -82,7 +86,7 @@
                     if (model) {
                         jobPlaceId = model.data.jobPlaceId;
                     }
-
+                    
                     if (jobPlaceId == 1) {
                         $(".createHaulingDiv").show();
                         $(".receiveHaulingDiv").hide();
