@@ -161,7 +161,7 @@ if (typeof LocalRepository === "undefined") {
             }
 
             this.getDailyCreatedHaulings = async () => {
-                return await db.haulings.where({status: 'creado'}).toArray();
+                return await db.haulings.where({status: 'creado'}).reverse().sortBy('ticketId');
             }
 
             this.getDailyReceivedHaulings = async () => {
