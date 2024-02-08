@@ -169,7 +169,9 @@ if (typeof LocalRepository === "undefined") {
             }
 
             this.validateTicketId = async (ticketId) => {
-                return await db.haulings.where({ticketId: ticketId}).toArray().length == 0;
+                var haulingsForTicketId = await db.haulings.where({ticketId: ticketId}).toArray();
+
+                return haulingsForTicketId.length == 0;
             }
         }
 
