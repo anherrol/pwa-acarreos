@@ -165,7 +165,7 @@ if (typeof LocalRepository === "undefined") {
             }
 
             this.getDailyReceivedHaulings = async () => {
-                return await db.haulings.where("status").equals("recibido").or("status").equals("en ruta").reverse().sortBy("status");
+                return await db.haulings.where("status").equals("recibido").or("status").equals("en ruta").reverse().sortBy("ticketId");
             }
 
             this.validateTicketId = async (ticketId) => {
