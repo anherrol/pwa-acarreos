@@ -15,7 +15,7 @@ if (typeof LocalRepository === "undefined") {
         }
 
         // Define a schema
-        db.version(1.3).stores({
+        db.version(1.4).stores({
                 trucks: 'id, qrcode, description', 
                 drivers: 'id, qrcode, description', 
                 gondolas: 'id, qrcode, description', 
@@ -28,7 +28,8 @@ if (typeof LocalRepository === "undefined") {
                 creationOfEvents: 'id, machineId, hourmeter, eventType, observations, operatorId', 
                 haulings: 'id, truckId, ticketId, status', 
                 jobplaces: 'id, nombre, prefijoBoletas, lugarOrigen, numeroFrente, numeroLote, esMina', 
-                logentries: '++logId, logEntry, logDate, entryType'
+                logentries: '++logId, logEntry, logDate, entryType', 
+                carriers: 'id, qrCode, description'
             });
 
         // Open the database
@@ -90,7 +91,8 @@ if (typeof LocalRepository === "undefined") {
                 return await db.haulings.where({status: 'recibido'}).toArray();
             }
 
-            this.storeNewHauling = async (ticketId, truckId, gondolaOneId, weightOne, gondolaTwoId, weightTwo) => {
+            // store local hauling
+            this.storeNewHauling = async (ticketId, truckId, gondolaOneId, weightOne, gondolaTwoId, weightTwo, carrierId) => {
                 try {
                     await db.haulings
                         .add({
@@ -101,7 +103,8 @@ if (typeof LocalRepository === "undefined") {
                             weightOne: weightOne, 
                             gondolaTwoId: gondolaTwoId, 
                             weightTwo: weightTwo, 
-                            status: 'creado'
+                            status: 'creado', 
+                            carrierId: carrierId
                         });
                 } catch (error) {
                     this.logEntries.storeLogError('Failed to add new hauling. Error: ' + error);
@@ -271,6 +274,20 @@ if (typeof LocalRepository === "undefined") {
             
             this.getEventTypes = function (data) {
                 return db.eventtypes.toArray();
+            }
+
+            // carriers
+            this.storeCarriers = function (data) {
+                db.carriers
+                    .put({ id: data.id, qrcode: data.qrCode, description: data.description })
+                    .catch((error) => {
+                        console.error("Failed to add new carrier. Error: " + error);
+                        return Promise.reject(error);
+                    });
+            }
+            
+            this.getCarriers = function () {
+                return db.carriers.toArray();
             }
         }
 

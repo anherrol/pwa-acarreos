@@ -1,7 +1,7 @@
 if (typeof BASE_API_URL === 'undefined' || typeof ajaxService === 'undefined') {
     // var BASE_API_URL = 'http://acarreosapi.local/api/';
-    // var BASE_API_URL = 'https://localhost:7065/api/'; 
-    var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
+    var BASE_API_URL = 'https://localhost:7065/api/'; 
+    // var BASE_API_URL = 'https://mobileapi20231229170346.azurewebsites.net/api/';
 }
 
 function AuthProxy() {
@@ -144,7 +144,7 @@ function HaulingsProxy() {
         );
     }
 
-    this.storeHauling = function(ticketId, userId, haulingId, tractorTruckId, driver, gondolaId1, cantidadM31, gondolaId2, cantidadM32, successCallBack) {
+    this.storeHauling = function(ticketId, userId, haulingId, tractorTruckId, driver, gondolaId1, cantidadM31, gondolaId2, cantidadM32, carrierId, successCallBack) {
         let operationDate = new Date();
 
         this.ajaxService.callPostService( 
@@ -165,7 +165,8 @@ function HaulingsProxy() {
                         "gondolaId": gondolaId2,
                         "cantidadM3": cantidadM32
                     }
-                ]
+                ], 
+                "carrierId": carrierId
             }, 
             successCallBack, 
             (jqXhr, textStatus, errorMessage) => {
@@ -246,6 +247,7 @@ function SyncData() {
             'machines': [ 'Maquinaria', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeMachines(data[i]); } ], 
             'machineoperators': [ 'Operadores de maquinaria', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeMachineOperators(data[i]); } ], 
             'eventtypes': [ 'Tipos de eventos', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeEventTypes(data[i]); } ], 
+            'carriers': [ 'Transportistas', (data) => { for (var i = 0; i < data.length; i++) this.localRepository.catalogs.storeCarriers(data[i]); } ], 
         };
 
         var catalogsProxy = new CatalogsProxy();
@@ -307,6 +309,7 @@ function SyncData() {
 
             // updload only new haulings
             var newHaulings = await this.localRepository.haulings.getLocalNewHaulings(); 
+
             newHaulings.every((newHauling) => { 
                 haulingsProxy.storeHauling(
                     newHauling.ticketId, 
@@ -318,6 +321,7 @@ function SyncData() {
                     newHauling.weightOne, 
                     newHauling.gondolaTwoId, 
                     newHauling.weightTwo,
+                    newHauling.carrierId, 
                     (data, status) => {
                         if (status == 'success') {
                             // se actualiza el hauling local, para no volver a subirlo
