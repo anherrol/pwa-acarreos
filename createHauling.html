@@ -37,7 +37,8 @@
                 <div class="form-group">
                     <label for="folioBoleta" class="form-label">Folio en Boleta</label>
                     <input class="form-control" type="number" id="folioBoleta" name="folioBoleta" autocorrect="off" autocomplete="off" placeholder="Folio de la boleta" />
-                </div> 
+                </div>
+                <br /> 
                 <div class="form-group">
                     <div class="row">
                         <label for="truckList" class="form-label">Tractocamiones</label>
@@ -47,7 +48,8 @@
                             <input id="truckList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
                         </div>
                     </div>
-                </div> 
+                </div>
+                <br /> 
                 <div class="form-group">
                     <div class="row">
                         <label for="gondolaList" class="form-label">Primera góndola</label>
@@ -57,11 +59,13 @@
                             <input id="gondolaList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
                         </div>
                     </div>
-                </div> 
+                </div>
+                <br /> 
                 <div class="form-group">
                     <label for="primerTonelaje" class="form-label">Primer volumen (m<sup>3</sup>)</label>
                     <input class="form-control" type="number" id="primerTonelaje" name="primerTonelaje" min="0" max="300" placeholder="Ingrese volumen de la primera góndola..." />
-                </div> 
+                </div>
+                <br /> 
                 <div class="form-group">
                     <div class="row">
                         <label for="secondGondolaList" class="form-label">Segunda góndola</label>
@@ -71,21 +75,20 @@
                             <input id="secondGondolaList" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off" class="auto-complete-control" />
                         </div>
                     </div>
-                </div> 
+                </div>
+                <br /> 
                 <div class="form-group">
                     <label for="segundoTonelaje" class="form-label">Segundo volumen (m<sup>3</sup>)</label>
                     <input class="form-control" type="number" id="segundoTonelaje" name="segundoTonelaje" min="0" max="300" placeholder="Ingrese volumen de la segunda góndola..." />
                 </div> 
+                <br />
                 <div class="form-group">
                     <label for="carriersList" class="form-label">Transportista:</label>
-                    <select class="form-control" type="number" id="carriersList" name="carriersList" min="0" max="300" />
+                    <select class="form-control" id="carriersList" name="carriersList"></select>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <input type="button" class="btn btn-primary form-control" onclick="guardarAcarreo();" value="Guardar Acarreo">
-                        </div> 
-                    </div>
+                <br />
+                <div class="form-group">
+                    <input type="button" class="btn btn-primary form-control" onclick="guardarAcarreo();" value="Guardar Acarreo">
                 </div>
                 <div class="form-group">
                     <label id="possibleError" class="form-label error-label"></label>
