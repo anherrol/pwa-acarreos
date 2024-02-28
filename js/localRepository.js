@@ -111,9 +111,21 @@ if (typeof LocalRepository === "undefined") {
                 }
             };
 
-            this.updateHaulingReception = (id, hOne1, hOne2, hOne3, hOne4, hTwo1, hTwo2, hTwo3, hTwo4) => {
+            this.updateHaulingReception = (id, hOne1, hOne2, hOne3, hOne4, volumeOne, hTwo1, hTwo2, hTwo3, hTwo4, volumeTwo) => {
                 return db.haulings
-                    .update(id, {hOne1: hOne1, hOne2: hOne2, hOne3: hOne3, hOne4: hOne4, hTwo1: hTwo1, hTwo2: hTwo2, hTwo3: hTwo3, hTwo4: hTwo4, status: 'recibido'})
+                    .update(id, {
+                        hOne1: hOne1, 
+                        hOne2: hOne2, 
+                        hOne3: hOne3, 
+                        hOne4: hOne4, 
+                        volumeOne: volumeOne, 
+                        hTwo1: hTwo1, 
+                        hTwo2: hTwo2, 
+                        hTwo3: hTwo3, 
+                        hTwo4: hTwo4, 
+                        volumeTwo: volumeTwo, 
+                        status: 'recibido'
+                    });
             };
 
             this.updateHaulingFinalization = (id) => {

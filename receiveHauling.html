@@ -52,17 +52,32 @@
                 </div> 
                 <br /> 
                 <div class="form-group">
-                    <label for="gondolaList" class="form-label">Primera góndola</label>
-                    <input class="form-control" id="gondolaList" placeholder="Primera góndola" disabled="disabled">
+                    <div class="row">
+                        <div class="col">
+                            <label for="ticket-id" class="form-label">Folio de la Boleta</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" id="ticket-id" placeholder="" disabled="disabled">
+                        </div>
+                    </div>
                 </div> 
-                <br /> 
                 <div class="form-group">
                     <div class="row">
                         <div class="col">
-                            <label for="firstGondolaVolume" class="form-label">Volúmen original</label>
+                            <label for="gondolaList" class="form-label">Primera góndola</label>
                         </div>
                         <div class="col">
-                            <input class="form-control" id="firstGondolaVolume" placeholder="0" disabled="disabled"><div class="row">
+                            <input class="form-control" id="gondolaList" placeholder="Primera góndola" disabled="disabled">
+                        </div>
+                    </div>
+                </div> 
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="firstGondolaVolume" class="form-label">Volumen original</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" id="firstGondolaVolume" placeholder="0" disabled="disabled">
                         </div>
                     </div>
                 </div> 
@@ -85,17 +100,30 @@
                             <input class="form-control" type="number" id="1h4" name="1h4" min="0" max="300" placeholder="H4" />
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="form-label" for="cubicaje-sedena-1">Cubicaje SEDENA</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" type="number" id="cubicaje-sedena-1" name="cubicaje-sedena-1" min="0" max="300" placeholder="Cubicaje" />
+                        </div>
+                    </div>
                 </div> 
                 <br />
                 <div class="form-group">
-                    <label for="secondGondolaList" class="form-label">Segunda góndola</label>
-                    <input class="form-control" id="secondGondolaList" placeholder="Segunda góndola" disabled="disabled">
+                    <div class="row">
+                        <div class="col">
+                            <label for="secondGondolaList" class="form-label">Segunda góndola</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" id="secondGondolaList" placeholder="Segunda góndola" disabled="disabled">
+                        </div>
+                    </div>
                 </div>
-                <br /> 
                 <div class="form-group">
                     <div class="row">
                         <div class="col">
-                            <label for="secondGondolaVolume" class="form-label">Volúmen original</label>
+                            <label for="secondGondolaVolume" class="form-label">Volumen original</label>
                         </div>
                         <div class="col">
                             <input class="form-control" id="secondGondolaVolume" placeholder="0" disabled="disabled">
@@ -119,6 +147,14 @@
                         </div>
                         <div class="col">
                             <input class="form-control" type="number" id="2h4" name="2h4" min="0" max="300" placeholder="H4" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="form-label" for="cubicaje-sedena-2">Cubicaje SEDENA</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" type="number" id="cubicaje-sedena-2" name="cubicaje-sedena-2" min="0" max="300" placeholder="Cubicaje" />
                         </div>
                     </div>
                 </div>
@@ -201,6 +237,12 @@
                     message = 'Debe seleccionar un cuarto nivel de la primera góndola válido.';
                 }
 
+                if (result && $('#cubicaje-sedena-1').val() === '') {
+                    result = false;
+                    focusControl = 'cubicaje-sedena-1';
+                    message = 'Debe seleccionar el cubicaje de SEDENA para la primera góndola.';
+                }
+
                 if (result && $('#secondGondolaList').val() !== '' && $('#2h1').val() === '') {
                     result = false;
                     focusControl = '2h1';
@@ -223,6 +265,12 @@
                     result = false;
                     focusControl = '2h4';
                     message = 'Debe seleccionar un cuarto nivel de la segunda góndola válido.';
+                }
+
+                if (result && $('#secondGondolaList').val() !== '' && $('#cubicaje-sedena-2').val() === '') {
+                    result = false;
+                    focusControl = 'cubicaje-sedena-2';
+                    message = 'Debe seleccionar el cubicaje de SEDENA para la segunda góndola.';
                 }
 
                 $('#possibleError').text(message);
@@ -254,6 +302,7 @@
                                 $("#secondGondolaVolume").val(element.weightTwo);
                                 $("#bankName").val(element.bankName);
                                 $("#hdnHaulingId").val(element.id);
+                                $("#ticket-id").val(element.foliotBoleta)
 
                                 if (data.gondolaTwoId === '') {
                                     $("#2h1").prop( "disabled", true );
@@ -292,10 +341,13 @@
                             $('#1h2').val(), 
                             $('#1h3').val(), 
                             $('#1h4').val(), 
+                            $('#cubicaje-sedena-1').val(),
                             $('#2h1').val(), 
                             $('#2h2').val(), 
                             $('#2h3').val(), 
-                            $('#2h4').val())
+                            $('#2h4').val(), 
+                            $('#cubicaje-sedena-2').val()
+                        )
                         .then((updated) => {
                             if (updated) {
                                 $("#successMessage").text("Acarreo actualizado satisfactoriamente.");

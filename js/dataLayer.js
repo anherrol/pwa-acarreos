@@ -175,7 +175,7 @@ function HaulingsProxy() {
         );
     }
 
-    this.updateHauling = function(userId, haulingId, tractorTruckId, driver, gondolaId1, h11, h21, h31, h41, gondolaId2, h12, h22, h32, h42, successCallBack) {
+    this.updateHauling = function(userId, haulingId, tractorTruckId, driver, gondolaId1, h11, h21, h31, h41, volumeOne, gondolaId2, h12, h22, h32, h42, volumeTwo, successCallBack) {
         let operationDate = new Date();
 
         this.ajaxService.callPutService( 
@@ -193,14 +193,16 @@ function HaulingsProxy() {
                         "h1": h11,
                         "h2": h21,
                         "h3": h31,
-                        "h4": h41
+                        "h4": h41, 
+                        "volumeSedena": volumeOne
                     }, 
                     {
                         "gondolaId": gondolaId2,
                         "h1": h12,
                         "h2": h22,
                         "h3": h32,
-                        "h4": h42
+                        "h4": h42, 
+                        "volumeSedena": volumeTwo
                     }
                 ]
             }, 
@@ -372,8 +374,10 @@ function SyncData() {
                     '', 
                     hauling.gondolaOneId, 
                     hauling.hOne1, hauling.hOne2, hauling.hOne3, hauling.hOne4, 
+                    hauling.volumeOne, 
                     hauling.gondolaTwoId, 
                     hauling.hTwo1, hauling.hTwo2, hauling.hTwo3, hauling.hTwo4, 
+                    hauling.volumeTwo, 
                     (data, status) => { });
 
                 return true;
