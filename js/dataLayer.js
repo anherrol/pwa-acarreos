@@ -178,12 +178,15 @@ function HaulingsProxy() {
     this.updateHauling = function(userId, haulingId, tractorTruckId, driver, gondolaId1, h11, h21, h31, h41, volumeOne, gondolaId2, h12, h22, h32, h42, volumeTwo, successCallBack) {
         let operationDate = new Date();
 
+        const event = new Date();
+        const jsonDate = event.toJSON();
+
         this.ajaxService.callPutService( 
             this.service,
             haulingId,
             {
                 "userId": userId,
-                "operationDate": "2023-12-22T15:21:23.130Z",
+                "operationDate": jsonDate,
                 "haulingId": haulingId,
                 "tractorTruckId": tractorTruckId,
                 "driver": driver,
